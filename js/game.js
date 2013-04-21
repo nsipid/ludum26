@@ -4,6 +4,8 @@ var Immortal = {
 	y : 40,
 	height : 40,
 	width : 40,
+    currentScreen : null, // sets to homeScreen in init
+    actions : [], // sets in init
 	level : 0,
 	step : 0,
 	stepPadding : 0,
@@ -43,35 +45,26 @@ var Immortal = {
             }
 	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
         }
-
-    },
-
-    drawEllipse : function(ctx, color, centerX, centerY, width, height) {
-    
-	ctx.beginPath();
-	
-	ctx.moveTo(centerX, centerY - height/2);
-	
-	ctx.bezierCurveTo(
-            centerX + width/2, centerY - height/2,
-            centerX + width/2, centerY + height/2,
-            centerX, centerY + height/2);
-
-	ctx.bezierCurveTo(
-            centerX - width/2, centerY + height/2,
-            centerX - width/2, centerY - height/2,
-            centerX, centerY - height/2);
-	
-	ctx.fillStyle = color;
-	ctx.fill();
-	ctx.closePath();
     },
 
     update : function( ctx ) {
+
 	// update stuff
 	ctx.canvas.width = ctx.canvas.width;
 	ctx.fillStyle = '#999999';
 	ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+
+    // draw debug spots for action hotspots
+    for ( var i=0;i<Immortal.actions.length;i++ ) {
+        if ( Immortal.distance( Immortal.guy, Immortal.actions[i].coords ) < Immortal.actions[i].radius ) {
+            ctx.fillStyle = "#ff0000";
+        }
+        else {
+            ctx.fillStyle = "#00ff00";
+        }
+
+        ctx.fillRect(Immortal.actions[i].coords.x, Immortal.actions[i].coords.y, 4, 4);
+    }
 
 	if ( keysDown[37]) { //left!
 	    Immortal.guy.x--;
@@ -89,9 +82,23 @@ var Immortal = {
 	    Immortal.guy.y++;
             Immortal.guy.moveDown();
 	}
+    if ( keysDown[32]) {
+        // check for actions
+        console.log( Immortal.actions );
+        for ( var i=0; i < Immortal.actions.length; i++ ) {
+            console.log( 'guy.x : ' + Immortal.guy.x + ' guy.y : ' + Immortal.guy.y + ' available action: ' + Immortal.actions[i].action + ' distance to action: ' + Immortal.distance( Immortal.guy, Immortal.actions[i].coords ) );
+        }
+    }
         
 	// draw the guy
         Immortal.guy.draw( ctx );
+
+
+    // check for move off screen
+    // if ( movingoffscreen )
+    //    load up new screen
+
+    // display action maybe
 
 	// request new frame
         requestAnimFrame(function() {
@@ -102,54 +109,39 @@ var Immortal = {
     init : function() {
 	var canvas = document.getElementById("immortal_canvas");
 	var ctx = canvas.getContext("2d");
-	canvas.width = 640;
-	canvas.height = 480;
+	canvas.width = 512;
+	canvas.height = 512;
 
 	ctx.fillStyle = '#999999';
 	ctx.fillRect(0,0,canvas.width,canvas.height);
 	Immortal.guy.img = document.createElement('img');
 	Immortal.guy.img.src = "./images/GuyLightExample.png";
+
+    Immortal.loadScreen( Screens.homeScreen, ctx );
+
 	Immortal.update( ctx );
+    },
+
+    loadScreen : function( screen, ctx ) {
+        Immortal.currentScreen = Screens.homeScreen;
+        Immortal.actions = Screens.homeScreen.actions;
+    },
+
+    distance : function( obj1, obj2 ) {
+        return Math.sqrt( obj1.x*obj2.x + obj1.y*obj2.y );
     }
+
 };
 
 // Keyboard 'buffer'
 var keysDown = {};
-var left = false;
-var right = false;
-var up = false;
-var down = false;
 
 addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true;
-    if (e.keyCode === 37) {
-	left = true;
-    }
-    if (e.keyCode === 39) {
-	right = true;
-    }
-    if (e.keyCode === 38) {
-	up = true;
-    }
-    if (e.keyCode === 40) {
-	down = true;
-    }
 }, false );
 
 addEventListener("keyup", function (e) {
     delete keysDown[e.keyCode];
-    if (e.keyCode === 37) {
-	left = false;
-    }
-    if (e.keyCode === 39) {
-	right = false;
-    }
-    if (e.keyCode === 38) {
-	up = false;
-    }
-    if (e.keyCode === 40) {
-	down = false;
-    }
 }, false);
 
 
