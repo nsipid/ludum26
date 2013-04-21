@@ -1,54 +1,52 @@
 var Immortal = {
     guy : {
-    x : 40,
-    y : 40,
-    height : 40,
-    width : 40,
-    currentScreen : null, // sets to homeScreen in init
-    actions : [], // sets in init
-    buttons : [],
-    level : 0,
-    step : 0,
-    stepPadding : 0,
-    draw : function ( ctx ) {
-        ctx.drawImage( Immortal.guy.img,  Immortal.guy.step * Immortal.guy.width, Immortal.guy.level * Immortal.guy.height, 
-               Immortal.guy.width, Immortal.guy.height, Immortal.guy.x, Immortal.guy.y, Immortal.guy.width, Immortal.guy.height); 
-    },
-    moveLeft : function (ctx) {
-        Immortal.guy.x = Immortal.guy.x <= 0 ? 0 : Immortal.guy.x - 1;
-        Immortal.guy.level = 3;
-        if ( Immortal.guy.stepPadding === 0)
-            {
-            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
-            }
-        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10; 
+        x : 40,
+        y : 40,
+        height : 40,
+        width : 40,
+        currentScreen : null, // sets to homeScreen in init
+        actions : [], // sets in init
+        buttons : [],
+        level : 0,
+        step : 0,
+        stepPadding : 0,
+        draw : function ( ctx ) {
+            ctx.drawImage( Immortal.guy.img,  Immortal.guy.step * Immortal.guy.width, Immortal.guy.level * Immortal.guy.height, 
+                   Immortal.guy.width, Immortal.guy.height, Immortal.guy.x, Immortal.guy.y, Immortal.guy.width, Immortal.guy.height); 
         },
-    moveRight : function (ctx) {
-        Immortal.guy.x =  Immortal.guy.x +  Immortal.guy.width >= ctx.canvas.width ?  ctx.canvas.width -  Immortal.guy.width :  Immortal.guy.x + 1;
-        Immortal.guy.level = 1;
-        if ( Immortal.guy.stepPadding === 0) 
-            {
-            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+        moveLeft : function (ctx) {
+            Immortal.guy.x = Immortal.guy.x <= 0 ? 0 : Immortal.guy.x - 1;
+            Immortal.guy.level = 3;
+            
+            if ( Immortal.guy.stepPadding === 0){
+                Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
-    },
-    moveDown : function (ctx) {
-            Immortal.guy.y =  Immortal.guy.y +  Immortal.guy.height >= ctx.canvas.height ?   ctx.canvas.height -  Immortal.guy.height:  Immortal.guy.y + 1;           
-            Immortal.guy.level = 0;
-        if ( Immortal.guy.stepPadding === 0)
-            {
-            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+            
+            Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10; 
+            },
+        moveRight : function (ctx){
+            Immortal.guy.x =  Immortal.guy.x +  Immortal.guy.width >= ctx.canvas.width ?  ctx.canvas.width -  Immortal.guy.width :  Immortal.guy.x + 1;
+            Immortal.guy.level = 1;
+            if ( Immortal.guy.stepPadding === 0) {
+                Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
-    },
+            Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
+        },
+        moveDown : function (ctx){
+                Immortal.guy.y =  Immortal.guy.y +  Immortal.guy.height >= ctx.canvas.height ?   ctx.canvas.height -  Immortal.guy.height:  Immortal.guy.y + 1;
+                Immortal.guy.level = 0;
+                if ( Immortal.guy.stepPadding === 0){
+                    Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+                }
+            Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
+        },
         moveUp : function (ctx) {
             Immortal.guy.y =  Immortal.guy.y <= 0 ?  0 : Immortal.guy.y - 1;
             Immortal.guy.level = 2;
-        if ( Immortal.guy.stepPadding === 0)
-            {
-            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+            if ( Immortal.guy.stepPadding === 0){
+                Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
+            Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
         }
     },
 
