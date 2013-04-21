@@ -1,13 +1,14 @@
 var Immortal = {
+    currentScreen : null, // sets to homeScreen in init
+    actions : [], // sets in init
+    buttons : [],
+    facts : [],
+
     guy : {
         x : 40,
         y : 40,
         height : 40,
         width : 40,
-        currentScreen : null, // sets to homeScreen in init
-        actions : [], // sets in init
-        buttons : [],
-        facts : [],
         level : 0,
         step : 0,
         stepPadding : 0,
@@ -75,9 +76,12 @@ var Immortal = {
         // show/hide buttons as appropriate
         for ( var i=0;i<Immortal.actions.length;i++ ) {
             if ( Immortal.distance( Immortal.guy, Immortal.actions[i].coords ) < Immortal.actions[i].radius ) {
-                Immortal.buttons[i].setAttribute( 'style', 'visiblity:hidden;' );
+                if ( Immortal.buttons[i].getAttribute( 'style' ) === 'visibility:hidden;' ) {
+                    Immortal.buttons[i].setAttribute( 'style', 'visiblity:hidden;' );
+                }
             }
             else {
+                if ( Immortal.buttons[i].getAttribute( 'style' ) === 'visibility:hidden;' )
                 Immortal.buttons[i].setAttribute( 'style', 'visibility:visible;' );
             }
         }
@@ -135,7 +139,6 @@ var Immortal = {
     loadScreen : function( screen ) {
         Immortal.currentScreen = screen;
         Immortal.actions = screen.actions;
-        Immortal.buttons = [];
         for ( var i=0;i<screen.actions.length;i++ ) {
             var b = document.createElement( 'button' );
             b.setAttribute( 'id', screen.actions[i].action );
