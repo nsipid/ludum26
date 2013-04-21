@@ -11,6 +11,7 @@ Screens.homeScreen = {
             coords : { x : 40, y : 40 }, // at the knife
             radius : 80, // anywhere within 40 of coords
             action : 'Pick up the kitchen knife.', // display on screen
+            effect : 'for (var i=0;i<Screens.homeScreen.actions[0].outcomes.length;i++) {Immortal.facts.push(Screens.homeScreen.actions[0].outcomes[i]);} console.log( Screens.homeScreen.actions[0].done_message );',
             outcomes : ['got_knife'], // what happens if action is taken (this fact becomes true)
             // somewhere in the game log, if 'got_knife', then stop drawing the knife
             done_message : 'You pick up the very sharp kitchen knife.', // display text if action is taken
