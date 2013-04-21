@@ -12,7 +12,7 @@ var Immortal = {
 			   Immortal.guy.width, Immortal.guy.height, Immortal.guy.x, Immortal.guy.y, Immortal.guy.width, Immortal.guy.height); 
 	},
 	moveLeft : function (ctx) {
-	    Immortal.guy.x = Immortal.guy.x <= 0 ? 0 : Immortal.guy.x - 1;
+	    x = x == 0 ? x : x-1;
 	    Immortal.guy.level = 3;
 	    if ( Immortal.guy.stepPadding === 0)
             {
@@ -21,16 +21,16 @@ var Immortal = {
 	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10; 
         },
 	moveRight : function (ctx) {
-	    Immortal.guy.x =  Immortal.guy.x +  Immortal.guy.width >= ctx.canvas.width ?  ctx.canvas.width -  Immortal.guy.width :  Immortal.guy.x + 1;
+            x = x == ctx.canvas.width ? x : x+1;
 	    Immortal.guy.level = 1;
-	    if ( Immortal.guy.stepPadding === 0) 
+	    if ( Immortal.guy.stepPadding === 0)
             {
 	        Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
 	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
 	},
 	moveDown : function (ctx) {
-	        Immortal.guy.y =  Immortal.guy.y +  Immortal.guy.height >= ctx.canvas.height ?   ctx.canvas.height -  Immortal.guy.height:  Immortal.guy.y + 1;		   
+	    y = y == 0 ? y : y-1;		   
             Immortal.guy.level = 0;
 	    if ( Immortal.guy.stepPadding === 0)
             {
@@ -39,7 +39,7 @@ var Immortal = {
 	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
 	},
         moveUp : function (ctx) {
-			Immortal.guy.y =  Immortal.guy.y <= 0 ?  0 : Immortal.guy.y - 1;
+			 y = y == ctx.canvas.height ? y : y+1;
             Immortal.guy.level = 2;
 	    if ( Immortal.guy.stepPadding === 0)
             {
