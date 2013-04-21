@@ -1,62 +1,63 @@
 var Immortal = {
     guy : {
-	x : 40,
-	y : 40,
-	height : 40,
-	width : 40,
+    x : 40,
+    y : 40,
+    height : 40,
+    width : 40,
     currentScreen : null, // sets to homeScreen in init
     actions : [], // sets in init
-	level : 0,
-	step : 0,
-	stepPadding : 0,
-	draw : function ( ctx ) {
-	    ctx.drawImage( Immortal.guy.img,  Immortal.guy.step * Immortal.guy.width, Immortal.guy.level * Immortal.guy.height, 
-			   Immortal.guy.width, Immortal.guy.height, Immortal.guy.x, Immortal.guy.y, Immortal.guy.width, Immortal.guy.height); 
-	},
-	moveLeft : function (ctx) {
-	    Immortal.guy.x = Immortal.guy.x <= 0 ? 0 : Immortal.guy.x - 1;
-	    Immortal.guy.level = 3;
-	    if ( Immortal.guy.stepPadding === 0)
+    buttons : [],
+    level : 0,
+    step : 0,
+    stepPadding : 0,
+    draw : function ( ctx ) {
+        ctx.drawImage( Immortal.guy.img,  Immortal.guy.step * Immortal.guy.width, Immortal.guy.level * Immortal.guy.height, 
+               Immortal.guy.width, Immortal.guy.height, Immortal.guy.x, Immortal.guy.y, Immortal.guy.width, Immortal.guy.height); 
+    },
+    moveLeft : function (ctx) {
+        Immortal.guy.x = Immortal.guy.x <= 0 ? 0 : Immortal.guy.x - 1;
+        Immortal.guy.level = 3;
+        if ( Immortal.guy.stepPadding === 0)
             {
-	        Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10; 
+        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10; 
         },
-	moveRight : function (ctx) {
-	    Immortal.guy.x =  Immortal.guy.x +  Immortal.guy.width >= ctx.canvas.width ?  ctx.canvas.width -  Immortal.guy.width :  Immortal.guy.x + 1;
-	    Immortal.guy.level = 1;
-	    if ( Immortal.guy.stepPadding === 0) 
+    moveRight : function (ctx) {
+        Immortal.guy.x =  Immortal.guy.x +  Immortal.guy.width >= ctx.canvas.width ?  ctx.canvas.width -  Immortal.guy.width :  Immortal.guy.x + 1;
+        Immortal.guy.level = 1;
+        if ( Immortal.guy.stepPadding === 0) 
             {
-	        Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
-	},
-	moveDown : function (ctx) {
-	        Immortal.guy.y =  Immortal.guy.y +  Immortal.guy.height >= ctx.canvas.height ?   ctx.canvas.height -  Immortal.guy.height:  Immortal.guy.y + 1;		   
+        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
+    },
+    moveDown : function (ctx) {
+            Immortal.guy.y =  Immortal.guy.y +  Immortal.guy.height >= ctx.canvas.height ?   ctx.canvas.height -  Immortal.guy.height:  Immortal.guy.y + 1;           
             Immortal.guy.level = 0;
-	    if ( Immortal.guy.stepPadding === 0)
+        if ( Immortal.guy.stepPadding === 0)
             {
-	        Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
-	},
+        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
+    },
         moveUp : function (ctx) {
-			Immortal.guy.y =  Immortal.guy.y <= 0 ?  0 : Immortal.guy.y - 1;
+            Immortal.guy.y =  Immortal.guy.y <= 0 ?  0 : Immortal.guy.y - 1;
             Immortal.guy.level = 2;
-	    if ( Immortal.guy.stepPadding === 0)
+        if ( Immortal.guy.stepPadding === 0)
             {
-	        Immortal.guy.step = (Immortal.guy.step + 1) % 3;
+            Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
-	    Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
+        Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
         }
     },
 
     update : function( ctx ) {
 
-	// update stuff
-	ctx.canvas.width = ctx.canvas.width;
-	ctx.fillStyle = '#999999';
-	ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    // update stuff
+    ctx.canvas.width = ctx.canvas.width;
+    ctx.fillStyle = '#999999';
+    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
     // draw debug spots for action hotspots
     for ( var i=0;i<Immortal.actions.length;i++ ) {
@@ -70,18 +71,29 @@ var Immortal = {
         ctx.fillRect(Immortal.actions[i].coords.x, Immortal.actions[i].coords.y, 4, 4);
     }
 
-	if ( keysDown[37]) { //left!
-            Immortal.guy.moveLeft(ctx);
-	}
-	if ( keysDown[39]) { // right!
-            Immortal.guy.moveRight(ctx);
-	}
-	if ( keysDown[38]) { // up!
-            Immortal.guy.moveUp(ctx);
-	}
-	if ( keysDown[40]) {
-            Immortal.guy.moveDown(ctx);
-	}
+    // show/hide buttons as appropriate
+    for ( var i=0;i<Immortal.actions.length;i++ ) {
+        if ( Immortal.distance( Immortal.guy, Immortal.actions[i].coords ) < Immortal.actions[i].radius ) {
+            Immortal.buttons[i].setAttribute( 'style', 'visiblity:hidden;' );
+        }
+        else {
+            Immortal.buttons[i].setAttribute( 'style', 'visibility:visible;' );
+        }
+    }
+
+    // movement
+    if ( keysDown[37]) { //left!
+        Immortal.guy.moveLeft(ctx);
+    }
+    if ( keysDown[39]) { // right!
+        Immortal.guy.moveRight(ctx);
+    }
+    if ( keysDown[38]) { // up!
+        Immortal.guy.moveUp(ctx);
+    }
+    if ( keysDown[40]) { // down!
+        Immortal.guy.moveDown(ctx);
+    }
     if ( keysDown[32]) {
         // check for actions
         console.log( Immortal.actions );
@@ -90,41 +102,42 @@ var Immortal = {
         }
     }
         
-	// draw the guy
-        Immortal.guy.draw( ctx );
-
+    // draw the guy
+    Immortal.guy.draw( ctx );
 
     // check for move off screen
     // if ( movingoffscreen )
     //    load up new screen
 
-    // display action maybe
-
-	// request new frame
-        requestAnimFrame(function() {
+    // request new frame
+    requestAnimFrame(function() {
             Immortal.update( ctx );
         });
     },
 
     init : function() {
-	var canvas = document.getElementById("immortal_canvas");
-	var ctx = canvas.getContext("2d");
-	canvas.width = 512;
-	canvas.height = 512;
+    var canvas = document.getElementById("immortal_canvas");
+    var ctx = canvas.getContext("2d");
+    canvas.width = 512;
+    canvas.height = 512;
 
-	ctx.fillStyle = '#999999';
-	ctx.fillRect(0,0,canvas.width,canvas.height);
-	Immortal.guy.img = document.createElement('img');
-	Immortal.guy.img.src = "./images/GuyLightExample.png";
+    ctx.fillStyle = '#999999';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    Immortal.guy.img = document.createElement('img');
+    Immortal.guy.img.src = "./images/GuyLightExample.png";
 
     Immortal.loadScreen( Screens.homeScreen, ctx );
 
-	Immortal.update( ctx );
+    Immortal.update( ctx );
     },
 
     loadScreen : function( screen, ctx ) {
         Immortal.currentScreen = Screens.homeScreen;
         Immortal.actions = Screens.homeScreen.actions;
+        for ( var i=0;i<Immortal.currentScreen.actions.length;i++ ) {
+            var b = document.createElement( 'button' );
+            Immortal.buttons[i] = b;
+        }
     },
 
     distance : function( obj1, obj2 ) {
@@ -148,10 +161,10 @@ addEventListener("keyup", function (e) {
 // animation loop across multiple browsers
 window.requestAnimFrame = (function(callback) {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-	function(callback) {
-	    	
-	    window.setTimeout(callback, 1000 / 60);
-	};
+    function(callback) {
+            
+        window.setTimeout(callback, 1000 / 60);
+    };
 })();
 
 window.onload = function() {
