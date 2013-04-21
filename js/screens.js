@@ -9,7 +9,7 @@ Screens.homeScreen = {
     actions : [
         {
             coords : { x : 40, y : 40 }, // at the knife
-            radius : 40, // anywhere within 40 of coords
+            radius : 80, // anywhere within 40 of coords
             action : 'Pick up the kitchen knife.', // display on screen
             outcomes : ['got_knife'], // what happens if action is taken (this fact becomes true)
             // somewhere in the game log, if 'got_knife', then stop drawing the knife
@@ -30,7 +30,7 @@ Screens.homeScreen = {
 
         {
             coords : { x : 50, y : 160 }, // coords of tub
-            radius : 40,
+            radius : 80,
             action : 'Get into the bath tub.',
             outcomes : ['in_bath'],
             done_message : 'You get into the bathtub and fill up the water.',
