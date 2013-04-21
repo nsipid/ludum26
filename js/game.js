@@ -12,7 +12,7 @@ var Immortal = {
         level : 0,
         step : 0,
         stepPadding : 0,
-        draw : function ( ctx, collisions) {
+        draw : function ( ctx ) {
             ctx.drawImage( Immortal.guy.img,  Immortal.guy.step * Immortal.guy.width, Immortal.guy.level * Immortal.guy.height, 
                            Immortal.guy.width, Immortal.guy.height, Immortal.guy.x, Immortal.guy.y, Immortal.guy.width, Immortal.guy.height); 
         },
@@ -36,8 +36,7 @@ var Immortal = {
             }
             Immortal.guy.x = nextX;
             Immortal.guy.level = 1;
-            if ( Immortal.guy.stepPadding === 0) 
-            {
+            if ( Immortal.guy.stepPadding === 0) {
                 Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
             Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
@@ -50,7 +49,6 @@ var Immortal = {
             Immortal.guy.y = nextY;
             Immortal.guy.level = 0;
             if ( Immortal.guy.stepPadding === 0){
-            {
                 Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
             Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
@@ -62,8 +60,7 @@ var Immortal = {
             }
             Immortal.guy.y = nextY;
             Immortal.guy.level = 2;
-            if ( Immortal.guy.stepPadding === 0)
-            {
+            if ( Immortal.guy.stepPadding === 0){
                 Immortal.guy.step = (Immortal.guy.step + 1) % 3;
             }
             Immortal.guy.stepPadding = (Immortal.guy.stepPadding + 1) % 10;
