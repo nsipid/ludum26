@@ -6,6 +6,7 @@ var targetX = 0;
 var targetY = 0;
 var mouseX = 0;
 var mouseY = 0;
+var mouseCoords = 'X=' + mouseX +  ' Y=' + mouseY;
 
 function clearCanvas () {
     ctx.canvas.width = ctx.canvas.width;
@@ -65,13 +66,9 @@ function findFreeBullet() {
 
 var then = Date.now();
 var now = Date.now();
-var dt = 0;
+var dt = now - then;
 
 function updateMain( ) {
-    now = Date.now();
-    dt = now - then;
-    then = now;
-
     clearCanvas();
 
     // movement (updates player)
@@ -128,7 +125,7 @@ function updateMain( ) {
     // draw mouse coords
     ctx.font = "20px Verdana";
     ctx.fillStyle = "#ff0000";
-    ctx.fillText('X=' + mouseX +  ' Y=' + mouseY, 350, 350);
+    ctx.fillText(mouseCoords, 350, 350);
 
     // request new frame
     requestAnimFrame(function() {
@@ -155,9 +152,6 @@ function checkCollision (testObject, collisionObjects) {
 
 function updateSplashScreen ( splashSize ) {
     if ( splashSize < 100 ) {
-        now = Date.now();
-        dt = now - then;
-        then = now;
 
         clearCanvas();
 
@@ -190,8 +184,8 @@ addEventListener("keyup", function (e) {
 }, false);
 
 addEventListener("mousemove", function (e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    mouseX = e.localX;
+    mouseY = e.localY;
 }, false);
 
 // animation loop across multiple browsers
