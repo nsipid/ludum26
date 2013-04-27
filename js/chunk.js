@@ -49,7 +49,7 @@ var bullets = (function() {
             height : 5,
             nextX : 0,
             nextY : 0,
-            speed : 110,
+            speed : 10,
             distanceTravelled: 0,
             visible : true 
         };
@@ -75,6 +75,7 @@ var dt = $R(function(now, then){ return now - then; });
 dt.bindTo(now, then);
 
 function updateMain( ) {
+    now(Date.now());
     clearCanvas();
 
     // movement (updates player)
@@ -134,8 +135,8 @@ function updateMain( ) {
     ctx.font = "20px Verdana";
     ctx.fillStyle = "#ff0000";
     ctx.fillText(mouseCoords(), 350, 350);
-
-    then(now); // then is now now
+    
+    then(Date.now()); // then is now now
 
     // request new frame
     requestAnimFrame(function() {
@@ -165,9 +166,9 @@ function checkOutsideBoundary (testObject, ctx) {
         || testObject.nextY < 0 
         || testObject.nextX > ctx.width 
         || testObject.nextY > ctx.width){
-                return false;
+                return true;
         }
-       return true; 
+       return false; 
 }
 
 function nextBulletAlongLine(bullet) {
