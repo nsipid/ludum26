@@ -40,11 +40,16 @@ var bullets = (function() {
         ret[x] = {
             x : 0,
             y : 0,
+            originX : 0,
+            originY : 0,
+            destX : 100,
+            destY : 200,
             width : 5,
             height : 5,
             nextX : 0,
             nextY : 0,
             speed : 110,
+            distanceTravelled: 0,
             visible : true 
         };
     }
@@ -108,15 +113,12 @@ function updateMain( ) {
 
     for ( b in bullets ) {
         if ( bullets[b].visible ) {
-            var nextPos = nextPositionAlongLine( bullets[b].x, bullets[b].y, 100, 100, 20 );
-            bullets[b].nextX = nextPos.x;
-            bullets[b].nextY = nextPos.y;
-            if ( checkCollision( bullets[b], bullets ) ) {
+            var newBullet = nextBulletAlongLine( bullets[b] );
+            if ( checkCollision( newBullet, bullets ) ) {
                 bullets[b].visible = false;
             }
             if ( checkOutsideBoundary ( bullets[b], ctx ) ) {
-                bullets[b].x = nextPos.x
-                bullets[b].y = nextPos.y
+                bullets[b] = newBullet;
                 draw( bullets[b] );
             }
         }
@@ -164,18 +166,19 @@ function checkOutsideBoundary (testObject, ctx) {
        return true; 
 }
 
-function nextPositionAlongLine(x1, y1, x2, y2, d ) {
-    var x3 = x2-x1;
-    var y3 = y2-y1;
+function nextBulletAlongLine(bullet) {
+    var x3 = bullet.destX - bullet.originX;
+    var y3 = bullet.destY - bullet.originY;
     var d3 = Math.sqrt ( x3*x3 + y3*y3 ); 
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
-    var nextPosition = {};
-    nextPosition.x = x1 + nX3*d3;
-    nextPosition.y = x2 + nY3*d3;
-
-    return nextPosition;
+    var nextBullet= {};
+    nextBullet.prototype = bullet.prototype;
+    nextBullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
+    nextBullet.x = originX + nX3*newBullet.distanceTravelled;
+    nextBullet.y = originY + nY3*newBullet.distanceTravelled;
+    return nextBullet;
 }
 
 function updateSplashScreen ( splashSize ) {
