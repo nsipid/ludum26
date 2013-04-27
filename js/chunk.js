@@ -2,6 +2,8 @@ var canvas = document.getElementById("chunk_canvas");
 canvas.width = 512;
 canvas.height = 512;
 var ctx = canvas.getContext("2d");
+var targetX = 0;
+var targetY = 0;
 var mouseX = 0;
 var mouseY = 0;
 
@@ -31,6 +33,10 @@ var bullets = (function() {
         ret[x] = {
             x : 0,
             y : 0,
+            width : 5,
+            height : 5,
+            nextX : 0,
+            nextY : 0,
             dx : 0,
             dy : 0,
             visible : false
@@ -46,7 +52,7 @@ function draw( guy ) {
 
 function findFreeBullet() {
     for ( b in bullets ) {
-        if ( bullets[b].visible === false )
+        if ( !bullets[b].visible )
             return bullets[b];
     }
 }
@@ -85,8 +91,9 @@ function update() {
     if ( keysDown[32]) {
         // chunk your stuff
         var b = findFreeBullet();
-        b.dx = 1;
-        b.dy = 1;
+        b.visible = true;
+        targetX = mouseX;
+        targetY = mouseY;
     }
 
     for ( e in entities ) {
@@ -96,6 +103,18 @@ function update() {
         } else {
             entities[e].x = entities[e].nextX;
             entities[e].y = entities[e].nextY;
+        }
+    }
+
+    for ( b in bullets ) {
+        if ( bullets[b].visible ) {
+            if ( checkCollision( bullets[b], entities ) ) {
+                bullets[b].visible = false;
+            }
+            t = 0.1; // needs to be an actual t
+            bullets[b].x = (1 - t)*entities[0].x + t * targetX;
+            bullets[b].y = (1 - t)*entities[0].y + t * targetY;
+            draw( bullets[b] );
         }
     }
 
