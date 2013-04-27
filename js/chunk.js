@@ -4,9 +4,10 @@ canvas.height = 512;
 var ctx = canvas.getContext("2d");
 var targetX = 0;
 var targetY = 0;
-var mouseX = 0;
-var mouseY = 0;
-var mouseCoords = 'X=' + mouseX +  ' Y=' + mouseY;
+var mouseX = $R.state(0);
+var mouseY = $R.state(0);
+var mouseCoords = $R(function(mouseX, mouseY){ return 'X=' + mouseX +  ' Y=' + mouseY; });
+mouseCoords.bindTo( mouseX, mouseY );
 
 function clearCanvas () {
     ctx.canvas.width = ctx.canvas.width;
@@ -63,9 +64,10 @@ function findFreeBullet() {
     }
 }
 
-var then = Date.now();
-var now = Date.now();
-var dt = now - then;
+var then = $R.state( Date.now() );
+var now = $R.state( Date.now() );
+var dt = $R(function(now, then){ return now - then; });
+dt.bindTo(now, then);
 
 function updateMain( ) {
     clearCanvas();
@@ -129,7 +131,9 @@ function updateMain( ) {
     // draw mouse coords
     ctx.font = "20px Verdana";
     ctx.fillStyle = "#ff0000";
-    ctx.fillText(mouseCoords, 350, 350);
+    ctx.fillText(mouseCoords(), 350, 350);
+
+    then(now); // then is now now
 
     // request new frame
     requestAnimFrame(function() {
@@ -185,7 +189,7 @@ function updateSplashScreen ( splashSize ) {
 
         // draw mouse coords
         var speed = 1;
-        var ds = speed + dt / 1000;
+        var ds = speed + dt() / 1000;
         var size = splashSize + ds;
         ctx.font = size + "px Verdana";
         ctx.fillStyle = "#777777";
@@ -212,8 +216,8 @@ addEventListener("keyup", function (e) {
 }, false);
 
 addEventListener("mousemove", function (e) {
-    mouseX = e.localX;
-    mouseY = e.localY;
+    mouseX(e.offsetX);
+    mouseY(e.offsetY);
 }, false);
 
 // animation loop across multiple browsers
