@@ -5,17 +5,21 @@ var ctx = canvas.getContext("2d");
 
 var entities = [
     {
-	x : 40,
-	y : 40,
-	width: 20,
-	height: 20
+        x: 40,
+        y: 40,
+        nextX: 40,
+        nextY: 40,
+        width: 20,
+        height: 20
     },
 
     {
-	x : 140,
-	y : 140,
-	width: 20,
-	height: 20
+        x : 140,
+        y : 140,
+        nextX: 140,
+        nextY: 140,
+        width: 20,
+        height: 20
     }
 ];
 
@@ -30,25 +34,35 @@ function update() {
     ctx.fillStyle = '#999999';
     ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
 
-    // movement
+    // movement (updates player)
     if ( keysDown[37]) {
-	entities[0].x--;
-	//move left
+        entities[0].nextX = entities[0].x--;
+        //move left
     }
     if ( keysDown[39]) {
-	entities[0].x++;
-	// move right
+        entities[0].nextX = entities[0].x++;
+        // move right
     }
     if ( keysDown[38]) {
-	entities[0].y--;
-	// move up
+        entities[0].nextY = entities[0].y--;
+        // move up
     }
     if ( keysDown[40]) {
-	entities[0].y++;
-	// move down
+        entities[0].nextY = entities[0].y++;
+        // move down
     }
     if ( keysDown[32]) {
         // chunk your stuff
+    }
+
+    for ( e in entities ) {
+        if ( checkCollision( entities[e], entities ) ) {
+            entities[e].nextX = 0;
+            entities[e].nextY = 0;
+        } else {
+            entities[e].x = entities[e].nextX;
+            entities[e].y = entities[e].nextY;
+        }
     }
 
     // draw the guys
@@ -65,13 +79,13 @@ function checkCollision (testObject, collisionObjects) {
     for ( var i = 0; i < collisionObjects.length; i++ ){
         var object = collisionObjects[i];
         if (object.x + object.width <= testObject.nextX ||
-	    testObject.width + testObject.nextX <= object.x ||
-	    object.y + object.height <= testObject.nextY ||
-	    testObject.height + testObject.nextY <= object.y) {
-            return false;
+            testObject.width + testObject.nextX <= object.x ||
+            object.y + object.height <= testObject.nextY ||
+            testObject.height + testObject.nextY <= object.y) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 // Keyboard 'buffer'
