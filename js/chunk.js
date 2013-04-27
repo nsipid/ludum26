@@ -36,19 +36,19 @@ function update() {
 
     // movement (updates player)
     if ( keysDown[37]) {
-        entities[0].nextX = entities[0].x--;
+        entities[0].nextX = entities[0].x-1;
         //move left
     }
     if ( keysDown[39]) {
-        entities[0].nextX = entities[0].x++;
+        entities[0].nextX = entities[0].x+1;
         // move right
     }
     if ( keysDown[38]) {
-        entities[0].nextY = entities[0].y--;
+        entities[0].nextY = entities[0].y-1;
         // move up
     }
     if ( keysDown[40]) {
-        entities[0].nextY = entities[0].y++;
+        entities[0].nextY = entities[0].y+1;
         // move down
     }
     if ( keysDown[32]) {
@@ -82,10 +82,10 @@ function checkCollision (testObject, collisionObjects) {
             testObject.width + testObject.nextX <= object.x ||
             object.y + object.height <= testObject.nextY ||
             testObject.height + testObject.nextY <= object.y) {
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 // Keyboard 'buffer'
