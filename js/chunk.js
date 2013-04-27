@@ -119,7 +119,7 @@ function updateMain( ) {
             if ( checkCollision( newBullet, bullets ) ) {
                 bullets[b].visible = false;
             }
-            if ( checkOutsideBoundary ( bullets[b], ctx ) ) {
+            if ( !checkOutsideBoundary ( bullets[b], ctx ) ) {
                 bullets[b] = newBullet;
                 draw( bullets[b] );
             }
@@ -164,7 +164,7 @@ function checkOutsideBoundary (testObject, ctx) {
     if (testObject.nextX < 0 
         || testObject.nextY < 0 
         || testObject.nextX > ctx.width 
-        || testObject.NextY > ctx.width){
+        || testObject.nextY > ctx.width){
                 return false;
         }
        return true; 
@@ -178,10 +178,10 @@ function nextBulletAlongLine(bullet) {
     var nY3 = y3 / d3;
 
     var nextBullet= {};
-    nextBullet.prototype = bullet.prototype;
+    nextBullet.prototype = bullet;
     nextBullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
-    nextBullet.x = originX + nX3*newBullet.distanceTravelled;
-    nextBullet.y = originY + nY3*newBullet.distanceTravelled;
+    nextBullet.x = bullet.originX + nX3*nextBullet.distanceTravelled;
+    nextBullet.y = bullet.originY + nY3*nextBullet.distanceTravelled;
     return nextBullet;
 }
 
