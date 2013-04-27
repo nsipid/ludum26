@@ -191,19 +191,21 @@ function updateSplashScreen ( splashSize ) {
         clearCanvas();
 
         // draw mouse coords
-        var speed = 1;
+        var speed = 0.5;
         var ds = speed + dt() / 1000;
         var size = splashSize + ds;
         ctx.font = size + "px Verdana";
         ctx.fillStyle = "#777777";
-        ctx.fillText('CHUNK', 50, 100);
+        ctx.fillText('CHUNK', 256 - size * 1.7, 250);
 
         // request new frame
         requestAnimFrame(function() {
             updateSplashScreen( size );
         });
     } else {
-        updateMain();
+	addEventListener("mousedown", function (e) {
+            updateMain();
+	}, false);
     }
 }
 
