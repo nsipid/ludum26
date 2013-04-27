@@ -7,6 +7,12 @@ var targetY = 0;
 var mouseX = 0;
 var mouseY = 0;
 
+function clearCanvas () {
+    ctx.canvas.width = ctx.canvas.width;
+    ctx.fillStyle = '#999999';
+    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+}
+
 var entities = [
     {
         x: 40,
@@ -61,15 +67,12 @@ var then = Date.now();
 var now = Date.now();
 var dt = 0;
 
-function update() {
+function updateMain( ) {
     now = Date.now();
     dt = now - then;
     then = now;
 
-    // update stuff
-    ctx.canvas.width = ctx.canvas.width;
-    ctx.fillStyle = '#999999';
-    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    clearCanvas();
 
     // movement (updates player)
     if ( keysDown[37]) {
@@ -129,7 +132,7 @@ function update() {
 
     // request new frame
     requestAnimFrame(function() {
-        update( ctx );
+        updateMain();
     });
 }
 
@@ -148,6 +151,31 @@ function checkCollision (testObject, collisionObjects) {
         }
     }
     return true;
+}
+
+function updateSplashScreen ( splashSize ) {
+    if ( splashSize < 100 ) {
+        now = Date.now();
+        dt = now - then;
+        then = now;
+
+        clearCanvas();
+
+        // draw mouse coords
+        var speed = 1;
+        var ds = speed + dt / 1000;
+        var size = splashSize + ds;
+        ctx.font = size + "px Verdana";
+        ctx.fillStyle = "#777777";
+        ctx.fillText('CHUNK', 50, 100);
+
+        // request new frame
+        requestAnimFrame(function() {
+            updateSplashScreen( size );
+        });
+    } else {
+        updateMain();
+    }
 }
 
 // Keyboard 'buffer'
@@ -179,5 +207,6 @@ window.onload = function() {
     document.onkeydown=function(){return event.keyCode!=38 && event.keyCode!=40 && event.keyCode!=32};
 
     // run the game here
-    update();
+    // spalsh screen first
+    updateSplashScreen( 0 );
 };
