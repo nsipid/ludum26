@@ -2,6 +2,8 @@ var canvas = document.getElementById("chunk_canvas");
 canvas.width = 512;
 canvas.height = 512;
 var ctx = canvas.getContext("2d");
+var mouseX = 0;
+var mouseY = 0;
 
 var entities = [
     {
@@ -23,12 +25,41 @@ var entities = [
     }
 ];
 
+var bullets = (function() {
+    var ret = [];
+    for ( var x = 0; x < 50; x++ ) {
+        ret[x] = {
+            x : 0,
+            y : 0,
+            dx : 0,
+            dy : 0,
+            visible : false
+        };
+    }
+    return ret;
+})();
+
 function draw( guy ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect( guy.x, guy.y, guy.width, guy.height );
 }
 
+function findFreeBullet() {
+    for ( b in bullets ) {
+        if ( bullets[b].visible === false )
+            return bullets[b];
+    }
+}
+
+var then = Date.now();
+var now = Date.now();
+var dt = 0;
+
 function update() {
+    now = Date.now();
+    dt = now - then;
+    then = now;
+
     // update stuff
     ctx.canvas.width = ctx.canvas.width;
     ctx.fillStyle = '#999999';
@@ -53,6 +84,9 @@ function update() {
     }
     if ( keysDown[32]) {
         // chunk your stuff
+        var b = findFreeBullet();
+        b.dx = 1;
+        b.dy = 1;
     }
 
     for ( e in entities ) {
@@ -69,10 +103,19 @@ function update() {
     for ( e in entities )
         draw( entities[e] );
 
+    // draw mouse coords
+    ctx.font = "20px Verdana";
+    ctx.fillStyle = "#ff0000";
+    ctx.fillText('X=' + mouseX +  ' Y=' + mouseY, 350, 350);
+
     // request new frame
     requestAnimFrame(function() {
         update( ctx );
     });
+}
+
+function distance ( obj1, obj2 ) {
+    return Math.sqrt( obj1.x*obj2.x + obj1.y*obj2.y );
 }
 
 function checkCollision (testObject, collisionObjects) {
@@ -97,6 +140,11 @@ addEventListener("keydown", function (e) {
 
 addEventListener("keyup", function (e) {
     delete keysDown[e.keyCode];
+}, false);
+
+addEventListener("mousemove", function (e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
 }, false);
 
 // animation loop across multiple browsers
