@@ -37,9 +37,8 @@ var bullets = (function() {
             height : 5,
             nextX : 0,
             nextY : 0,
-            dx : 0,
-            dy : 0,
-            visible : false
+            speed : 110,
+            visible : true 
         };
     }
     return ret;
@@ -97,7 +96,8 @@ function update() {
     }
 
     for ( e in entities ) {
-        if ( checkCollision( entities[e], entities ) ) {
+        if ( checkCollision( entities[e], entities ) 
+                || checkOutsideBoundary( entities[e], ctx ) ) {
             entities[e].nextX = 0;
             entities[e].nextY = 0;
         } else {
@@ -108,13 +108,17 @@ function update() {
 
     for ( b in bullets ) {
         if ( bullets[b].visible ) {
-            if ( checkCollision( bullets[b], entities ) ) {
+            var nextPos = nextPositionAlongLine( bullets[b].x, bullets[b].y, 100, 100, 20 );
+            bullets[b].nextX = nextPos.x;
+            bullets[b].nextY = nextPos.y;
+            if ( checkCollision( bullets[b], bullets ) ) {
                 bullets[b].visible = false;
             }
-            t = 0.1; // needs to be an actual t
-            bullets[b].x = (1 - t)*entities[0].x + t * targetX;
-            bullets[b].y = (1 - t)*entities[0].y + t * targetY;
-            draw( bullets[b] );
+            if ( checkOutsideBoundary ( bullets[b], ctx ) ) {
+                bullets[b].x = nextPos.x
+                bullets[b].y = nextPos.y
+                draw( bullets[b] );
+            }
         }
     }
 
@@ -148,6 +152,30 @@ function checkCollision (testObject, collisionObjects) {
         }
     }
     return true;
+}
+
+function checkOutsideBoundary (testObject, ctx) {
+    if (testObject.nextX < 0 
+        || testObject.nextY < 0 
+        || testObject.nextX > ctx.width 
+        || testObject.NextY > ctx.width){
+                return false;
+        }
+       return true; 
+}
+
+function nextPositionAlongLine(x1, y1, x2, y2, d ) {
+    var x3 = x2-x1;
+    var y3 = y2-y1;
+    var d3 = Math.sqrt ( x3*x3 + y3*y3 ); 
+    var nX3 = x3 / d3;
+    var nY3 = y3 / d3;
+
+    var nextPosition = {};
+    nextPosition.x = x1 + nX3*d3;
+    nextPosition.y = x2 + nY3*d3;
+
+    return nextPosition;
 }
 
 // Keyboard 'buffer'
