@@ -3,6 +3,7 @@
 var canvas = document.createElement('canvas');
 canvas.width = 800;
 canvas.height = 600;
+canvas.style.backgroundImage = 'url("https://github.com/nsipid/ludum26/blob/master/images/background.png?raw=true")';
 document.body.appendChild( canvas );
 var ctx = canvas.getContext("2d");
 
