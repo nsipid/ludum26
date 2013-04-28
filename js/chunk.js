@@ -95,11 +95,8 @@ function updateMain( ) {
     }
 
     for ( e in entities ) {
-        if ( checkCollision( entities[e], entities ) 
-                || checkOutsideBoundary( entities[e], ctx ) ) {
-            entities[e].nextX = 0;
-            entities[e].nextY = 0;
-        } else {
+        if ( !checkCollision( entities[e], entities ) 
+                && !checkOutsideBoundary( entities[e], ctx ) ) {
             entities[e].x = entities[e].nextX;
             entities[e].y = entities[e].nextY;
         }
@@ -116,9 +113,6 @@ function updateMain( ) {
                 bullets[b] = newBullet;
                 draw( bullets[b] );
             }
-	    else {
-		console.log("bullshit");
-	    }
         }
     }
 
@@ -173,18 +167,10 @@ function nextBulletAlongLine(bullet) {
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
-    var nextBullet= {};
+    var nextBullet= Object.create( bullet );
     nextBullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
     nextBullet.x = Math.round(bullet.originX + nX3*nextBullet.distanceTravelled);
     nextBullet.y = Math.round(bullet.originY + nY3*nextBullet.distanceTravelled);
-    nextBullet.width = bullet.width;
-    nextBullet.height = bullet.height;
-    nextBullet.originX = bullet.originX;
-    nextBullet.originY = bullet.originY;
-    nextBullet.destX = bullet.destX;
-    nextBullet.destY = bullet.destY;
-    nextBullet.speed= bullet.speed;
-    nextBullet.visible = bullet.visible;
     return nextBullet;
 }
 
