@@ -347,12 +347,26 @@ function updateXY(thing) {
 	!checkCollision(thing, obstacles) &&
 	!checkOutsideBoundary(thing, ctx)) {
 
-        if (thing.spriteState !== undefined && (thing.x != thing.nextX || thing.y != thing.nextY))
+        if (thing.spriteState !== undefined) {
+            if (thing.x < thing.next)
+                unflipImage(thing.img);
+            else if (thing.x > thing.next)
+                flipImage(thing.img);
+
             updateSpriteState(thing);
+        }
 
         thing.x = thing.nextX;
         thing.y = thing.nextY;
     }
+}
+
+function flipImage(img) {
+    img.style.cssText = '-moz-transform: scaleX(-1);-o-transform: scaleX(-1);-webkit-transform: scaleX(-1);transform: scaleX(-1);filter: FlipH;-ms-filter: "FlipH";';
+}
+
+function unflipImage() {
+    img.style.cssText = '';
 }
 
 function distance(point1, point2) {
