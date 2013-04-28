@@ -390,8 +390,8 @@ function checkCollision(testObject, collisionObjects, onCollision) {
 function checkOutsideBoundary(testObject, ctx) {
     if (testObject.nextX < 0
         || testObject.nextY < 0
-        || testObject.nextX > ctx.canvas.width
-        || testObject.nextY > ctx.canvas.height) {
+        || testObject.nextX + testObject.width > ctx.canvas.width
+        || testObject.nextY + testObject.height > ctx.canvas.height) {
         return true;
     }
     return false;
