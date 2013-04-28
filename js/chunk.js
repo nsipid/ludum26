@@ -29,10 +29,13 @@ var entities = [
         y : 140,
         nextX: 60,
         nextY: 140,
+        originX: 60,
+        originY: 140,
         destX: 60,
         destY: 140,
         victim: null,
         speed: 0.1,
+        distanceTravelled: 0,
         width: 20,
         height: 20,
         destCooldown: 0,
@@ -143,6 +146,8 @@ function updateMain( ) {
             if ( newEntity.destCooldown < 0 ) {
                 newEntity.destX = newEntity.x + (Math.random() * 100) - 50;
                 newEntity.destY = newEntity.y + (Math.random() * 100) - 50;
+                newEntity.originX = newEntity.x;
+                newEntity.originY = newEntity.y;
                 newEntity.destCooldown = 200; // change hunt dest every 200 milliseconds
             }
         }
