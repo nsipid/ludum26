@@ -1,6 +1,6 @@
 var canvas = document.getElementById("chunk_canvas");
-canvas.width = 512;
-canvas.height = 512;
+canvas.width = 800;
+canvas.height = 600;
 var ctx = canvas.getContext("2d");
 var targetX = 0;
 var targetY = 0;
@@ -11,8 +11,6 @@ mouseCoords.bindTo( mouseX, mouseY );
 
 function clearCanvas () {
     ctx.canvas.width = ctx.canvas.width;
-    ctx.fillStyle = '#999999';
-    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
 }
 
 var entities = [
