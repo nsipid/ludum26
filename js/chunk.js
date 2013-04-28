@@ -238,12 +238,12 @@ function updateMain( ) {
                 console.log("Player " + entity.playerId + " gains actual junk\n");
                 if (newBullet.shooter.actualJunk > 0) {
                     newBullet.shooter.actualJunk--;
-                    console.log("Player " + newBullet.shooter.playerId + " loses actual junk\n");
+                    //console.log("Player " + newBullet.shooter.playerId + " loses actual junk\n");
                 }
             } else {
                 //obstacle
                 newBullet.shooter.throwableJunk++;
-                console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
+                //console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
             }
         }
 
@@ -255,7 +255,7 @@ function updateMain( ) {
 
         // if bullet leaves stage
         if (checkOutsideBoundary(newBullet, ctx)) {
-            console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
+            //console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
             newBullet.shooter.throwableJunk++;
             delete bullets[b];
             continue;
@@ -270,10 +270,17 @@ function updateMain( ) {
     for (e in entities)
         drawCharacter( entities[e] );
 
-    // draw mouse coords
-    ctx.font = "20px Verdana";
-    ctx.fillStyle = "#ff0000";
-    ctx.fillText(mouseCoords(), 350, 350);
+    // draw debug info
+    for (e in entities) {
+	ctx.font = "20px Verdana";
+	ctx.fillStyle = "#ff0000";
+	ctx.fillText("throwable junk: " + entities[e].throwableJunk,
+		     entities[e].x,
+		     entities[e].y);
+	ctx.fillText("actual junk: " + entities[e].actualJunk,
+		     entities[e].x,
+		     entities[e].y - 20);
+    }
     
     then(Date.now()); // then is now now
 
