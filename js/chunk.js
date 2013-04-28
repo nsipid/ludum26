@@ -47,13 +47,15 @@ var entities = [
         nextX: 740,
         nextY: 60,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
-        playerId: 1
+        playerId: 1,
+        spriteState: 0,
+        lastSpriteTime: 0,
     },
     {
         x: 60,
@@ -61,10 +63,10 @@ var entities = [
         nextX: 60,
         nextY: 60,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 2,
@@ -76,7 +78,9 @@ var entities = [
         distanceTravelled: 0,
         destCooldown: 0,
         huntCooldown: 0,
-        shootCooldown: 0
+        shootCooldown: 0,
+        spriteState: 0,
+        lastSpriteTime: 0,
     },
     {
         x: 740,
@@ -84,10 +88,10 @@ var entities = [
         nextX: 740,
         nextY: 540,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 3,
@@ -99,7 +103,9 @@ var entities = [
         distanceTravelled: 0,
         destCooldown: 0,
         huntCooldown: 0,
-        shootCooldown: 0
+        shootCooldown: 0,
+        spriteState: 0,
+        lastSpriteTime: 0,
     },
     {
         x: 60,
@@ -107,10 +113,10 @@ var entities = [
         nextX: 60,
         nextY: 540,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/douchebag.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/dbag_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
@@ -122,7 +128,9 @@ var entities = [
         distanceTravelled: 0,
         destCooldown: 0,
         huntCooldown: 0,
-        shootCooldown: 0
+        shootCooldown: 0,
+        spriteState: 0,
+        lastSpriteTime: 0,
     }
 ];
 
@@ -147,7 +155,11 @@ var bullets = [];
 
 function drawCharacter( thing ) {
     ctx.fillStyle = '#444444';
-    ctx.drawImage( thing.img, thing.x, thing.y, thing.width, thing.height );
+    if (thing.spriteState === 0) {
+        ctx.drawImage(thing.img, 0, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
+    } else {
+        ctx.drawImage(thing.img, thing.width, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
+    }
 }
 
 function drawObstacle( obstacle ) {
@@ -157,6 +169,15 @@ function drawObstacle( obstacle ) {
 function drawBullet( thing ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
+}
+
+function updateSpriteState(sprite) {
+    sprite.lastSpriteTime += dt();
+    if (sprite.lastSpriteTime === 0 || sprite.lastSpriteTime >= 100) {
+        sprite.lastSpriteTime = 0;
+        sprite.spriteState++;
+        sprite.spriteState %= 2;
+    }
 }
 
 function updateMain( ) {
@@ -342,6 +363,9 @@ function updateXY(thing) {
     if (!checkCollision(thing, entities) &&
 	!checkCollision(thing, obstacles) &&
 	!checkOutsideBoundary(thing, ctx)) {
+
+        if (thing.spriteState !== undefined && (thing.x != thing.nextX || thing.y != thing.nextY))
+            updateSpriteState(thing);
 
         thing.x = thing.nextX;
         thing.y = thing.nextY;
