@@ -20,8 +20,9 @@ var entities = [
         nextX: 240,
         nextY: 40,
         speed: 0.1,
-        width: 20,
-        height: 20
+        width: 60,
+        height: 60,
+        imageSrc : 'images/snazzy.png'
     },
 
     {
@@ -30,8 +31,9 @@ var entities = [
         nextX: 60,
         nextY: 140,
         speed: 0.1,
-        width: 20,
-        height: 20
+        width: 60,
+        height: 60,
+        imageSrc : 'images/monk.png'
     }
 ];
 
@@ -54,7 +56,15 @@ var Bullet = function() {
 
 var bullets = [];
 
-function draw( thing ) {
+function drawCharacter( thing ) {
+    ctx.fillStyle = '#444444';
+    // ctx.fillRect( thing.x, thing.y, thing.width, thing.height );
+    thing.img = document.createElement('img');
+    thing.img.src = thing.imageSrc;
+    ctx.drawImage( thing.img, thing.x, thing.y, thing.width, thing.height );
+}
+
+function drawBullet( thing ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect( thing.x, thing.y, thing.width, thing.height );
 }
@@ -114,12 +124,12 @@ function updateMain( ) {
 
         // else
         bullets[b] = newBullet;
-        draw( bullets[b] );
+        drawBullet( bullets[b] );
     }
 
     // draw the guys
     for ( e in entities )
-        draw( entities[e] );
+        drawCharacter( entities[e] );
 
     // draw mouse coords
     ctx.font = "20px Verdana";
