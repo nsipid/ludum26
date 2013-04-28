@@ -23,7 +23,7 @@ var entities = [
         width: 60,
         height: 60,
         actualJunk: 10,
-        imageSrc : 'images/snazzy.png'
+        imageSrc : 'images/snazzy.png',
         throwableJunk: 10,
         playerId: 1,
     },
@@ -35,7 +35,7 @@ var entities = [
         speed: 0.1,
         width: 60,
         height: 60,
-        imageSrc : 'images/monk.png'
+        imageSrc : 'images/monk.png',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 2,
