@@ -187,22 +187,18 @@ function updateMain( ) {
     // movement (updates player)
     if (keysDown[37] || keysDown[65]) {
         entities[0].nextX = entities[0].x - entities[0].speed * dt();
-        updateSpriteState(entities[0]);
         //move left
     }
     if (keysDown[39] || keysDown[68]) {
         entities[0].nextX = entities[0].x + entities[0].speed * dt();
-        updateSpriteState(entities[0]);
         // move right
     }
     if (keysDown[38] || keysDown[87]) {
         entities[0].nextY = entities[0].y - entities[0].speed * dt();
-        updateSpriteState(entities[0]);
         // move up
     }
     if (keysDown[40] || keysDown[83]) {
         entities[0].nextY = entities[0].y + entities[0].speed * dt();
-        updateSpriteState(entities[0]);
         // move down
     }
     if ( keysDown[32]) {
@@ -350,6 +346,9 @@ function updateXY(thing) {
     if (!checkCollision(thing, entities) &&
 	!checkCollision(thing, obstacles) &&
 	!checkOutsideBoundary(thing, ctx)) {
+
+        if (thing.spriteState !== undefined && (thing.x != thing.nextX || thing.y != thing.nextY))
+            updateSpriteState(thing);
 
         thing.x = thing.nextX;
         thing.y = thing.nextY;
