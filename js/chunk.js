@@ -164,23 +164,24 @@ function updateMain( ) {
     clearCanvas();
 
     // movement (updates player)
-    if (keysDown[37]) {
+    if (keysDown[37] || keysDown[65]) {
         entities[0].nextX = entities[0].x - entities[0].speed * dt();
         //move left
     }
-    if (keysDown[39]) {
+    if (keysDown[39] || keysDown[68]) {
         entities[0].nextX = entities[0].x + entities[0].speed * dt();
         // move right
     }
-    if (keysDown[38]) {
+    if (keysDown[38] || keysDown[87]) {
         entities[0].nextY = entities[0].y - entities[0].speed * dt();
         // move up
     }
-    if (keysDown[40]) {
+    if (keysDown[40] || keysDown[83]) {
         entities[0].nextY = entities[0].y + entities[0].speed * dt();
         // move down
     }
     if ( keysDown[32]) {
+	// do something with spacebar
     }
 
     // drawing the obstacles
