@@ -1,13 +1,15 @@
-var canvas = document.getElementById("chunk_canvas");
+
+// put a canvas on in the DOM
+var canvas = document.createElement('canvas');
 canvas.width = 800;
 canvas.height = 600;
+document.body.appendChild( canvas );
 var ctx = canvas.getContext("2d");
-var targetX = 0;
-var targetY = 0;
-var mouseX = $R.state(0);
-var mouseY = $R.state(0);
-var mouseCoords = $R(function (mouseX, mouseY) { return 'X=' + mouseX + ' Y=' + mouseY; });
-mouseCoords.bindTo(mouseX, mouseY);
+
+// put the script in the DOM
+var reactiveScript = document.createElement('script');
+reactiveScript.src = "https://github.com/mattbaker/Reactive.js/raw/master/src/reactive.js";
+document.body.appendChild( reactiveScript );
 
 function clearCanvas() {
     ctx.canvas.width = ctx.canvas.width;
@@ -35,8 +37,9 @@ var entities = [
         speed: 0.1,
         width: 60,
         height: 60,
+	img: document.createElement('img'),
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy.png?raw=true',
         actualJunk: 10,
-        imageSrc : 'images/snazzy.png',
         throwableJunk: 10,
         playerId: 1,
     },
@@ -48,7 +51,8 @@ var entities = [
         speed: 0.1,
         width: 60,
         height: 60,
-        imageSrc : 'images/monk.png',
+	img: document.createElement('img'),
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 2,
@@ -61,7 +65,8 @@ var entities = [
         speed: 0.1,
         width: 60,
         height: 60,
-        imageSrc : 'images/ardiente.png',
+	img: document.createElement('img'),
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 3,
@@ -74,7 +79,8 @@ var entities = [
         speed: 0.1,
         width: 60,
         height: 60,
-        imageSrc : 'images/douchebag.png',
+	img: document.createElement('img'),
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/douchebag.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
@@ -103,8 +109,6 @@ var bullets = [];
 function drawCharacter( thing ) {
     ctx.fillStyle = '#444444';
     // ctx.fillRect( thing.x, thing.y, thing.width, thing.height );
-    thing.img = document.createElement('img');
-    thing.img.src = thing.imageSrc;
     ctx.drawImage( thing.img, thing.x, thing.y, thing.width, thing.height );
 }
 
@@ -112,13 +116,6 @@ function drawBullet( thing ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
 }
-
-var then = $R.state(Date.now());
-var now = $R.state(Date.now());
-var dt = $R(function (now, then) { return now - then; });
-dt.bindTo(now, then);
-
-var stateChangeTimer = 100;
 
 function updateMain( ) {
     now(Date.now());
@@ -169,7 +166,7 @@ function updateMain( ) {
 
     // AI Movement and shooting
     for ( var i = 1; i < entities.length; i ++ ) {
-        var newEntity = nextThingAlongLine( entities[i] );
+        var newEntity = nextBulletAlongLine( entities[i] );
 
         if ( newEntity.state == "attacking" ) {
             // shoot 'nearby' the entity at random
@@ -390,34 +387,58 @@ function updateSplashScreen ( splashSize ) {
     }
 }
 
-// Keyboard 'buffer'
-var keysDown = {};
+// kinda dumb, but some of this can't be run before DOM is complete
+function init() {
+    targetX = 0;
+    targetY = 0;
 
-addEventListener("keydown", function (e) {
-    keysDown[e.keyCode] = true;
-}, false);
+    mouseX = $R.state(0);
+    mouseY = $R.state(0);
+    mouseCoords = $R(function (mouseX, mouseY) { return 'X=' + mouseX + ' Y=' + mouseY; });
+    mouseCoords.bindTo(mouseX, mouseY);
 
-addEventListener("keyup", function (e) {
-    delete keysDown[e.keyCode];
-}, false);
+    then = $R.state(Date.now());
+    now = $R.state(Date.now());
+    dt = $R(function (now, then) { return now - then; });
+    dt.bindTo(now, then);
 
-addEventListener("mousedown", skipSplash, false);
+    stateChangeTimer = 100;
 
-function mouseClick(e) {
-    shoot(entities[0], e.offsetX, e.offsetY);
+    // this is dumb, but...
+    for ( e in entities ) {
+	entities[e].img.src = entities[e].imageSrc;
+    }
+
+    // Keyboard 'buffer'
+    keysDown = {};
+
+    addEventListener("keydown", function (e) {
+	keysDown[e.keyCode] = true;
+    }, false);
+
+    addEventListener("keyup", function (e) {
+	delete keysDown[e.keyCode];
+    }, false);
+
+    addEventListener("mousedown", skipSplash, false);
+
+    function mouseClick(e) {
+	shoot(entities[0], e.offsetX, e.offsetY);
+    }
+
+    function skipSplash(e) {
+	then(Date.now());
+	updateMain();
+	removeEventListener("mousedown", skipSplash, false);
+	addEventListener("mousedown", mouseClick, false);
+    }
+
+    addEventListener("mousemove", function (e) {
+	mouseX(e.offsetX);
+	mouseY(e.offsetY);
+    }, false);
+
 }
-
-function skipSplash(e) {
-    then(Date.now());
-    updateMain();
-    removeEventListener("mousedown", skipSplash, false);
-    addEventListener("mousedown", mouseClick, false);
-}
-
-addEventListener("mousemove", function (e) {
-    mouseX(e.offsetX);
-    mouseY(e.offsetY);
-}, false);
 
 // animation loop across multiple browsers
 window.requestAnimFrame = (function (callback) {
@@ -429,7 +450,10 @@ window.requestAnimFrame = (function (callback) {
 
 window.onload = function () {
     // disable scrolling
-    document.onkeydown = function () { return event.keyCode != 38 && event.keyCode != 40 && event.keyCode != 32 };
+    document.onkeydown = function () { return event.keyCode != 38 && event.keyCode != 40 && event.keyCode != 32; };
+
+    // do some nasty global initialization first
+    init();
 
     // run the game here
     // splash screen first
