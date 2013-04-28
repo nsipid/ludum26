@@ -16,10 +16,6 @@ function clearCanvas() {
     ctx.canvas.width = ctx.canvas.width;
 }
 
-// need to add
-/*
-*/
-
 var entities = [
     {
         x: 240,
@@ -127,7 +123,6 @@ var bullets = [];
 
 function drawCharacter( thing ) {
     ctx.fillStyle = '#444444';
-    // ctx.fillRect( thing.x, thing.y, thing.width, thing.height );
     ctx.drawImage( thing.img, thing.x, thing.y, thing.width, thing.height );
 }
 
@@ -185,7 +180,7 @@ function updateMain( ) {
 
     // AI Movement and shooting
     for ( var i = 1; i < entities.length; i ++ ) {
-        var newEntity = nextBulletAlongLine( entities[i] );
+        var newEntity = nextThingAlongLine( entities[i] );
 
         if ( newEntity.state == "attacking" ) {
             // shoot 'nearby' the entity at random
@@ -229,7 +224,13 @@ function updateMain( ) {
     }
 
     for (b in bullets) {
-        var newBullet = nextBulletAlongLine(bullets[b]);
+        var newBullet = nextThingAlongLine(bullets[b]);
+
+        if (!checkCollision(newBullet, entities)
+                && !checkOutsideBoundary(newBullet, ctx)) {
+            newBullet.x = newBullet.nextX;
+            newBullet.y = newBullet.nextY;
+        }
 
         var onCollision = function (entity) {
             //if we collided into a player
@@ -245,7 +246,7 @@ function updateMain( ) {
                 newBullet.shooter.throwableJunk++;
                 //console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
             }
-        }
+        };
 
         // if bullet hits something
         if (checkCollision(newBullet, entities, onCollision)) {
@@ -334,22 +335,18 @@ function checkOutsideBoundary(testObject, ctx) {
     return false;
 }
 
-function nextBulletAlongLine(bullet) {
-    var x3 = bullet.destX - bullet.originX;
-    var y3 = bullet.destY - bullet.originY;
+function nextThingAlongLine(thing) {
+    var x3 = thing.destX - thing.originX;
+    var y3 = thing.destY - thing.originY;
     var d3 = Math.sqrt(x3 * x3 + y3 * y3);
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
-    bullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
-    bullet.x = Math.round(bullet.originX + nX3 * bullet.distanceTravelled);
-    bullet.y = Math.round(bullet.originY + nY3 * bullet.distanceTravelled);
+    thing.distanceTravelled = thing.distanceTravelled + (dt() * thing.speed);
+    thing.nextX = Math.round(thing.originX + nX3 * thing.distanceTravelled);
+    thing.nextY = Math.round(thing.originY + nY3 * thing.distanceTravelled);
 
-    // hacks
-    bullet.nextX = bullet.x;
-    bullet.nextY = bullet.y;
-
-    return bullet;
+    return thing;
 }
 
 function shoot(entity, x, y) {
