@@ -21,9 +21,9 @@ var entities = [
         y: 40,
         nextX: 240,
         nextY: 40,
+        speed: 0.1,
         width: 20,
-        height: 20,
-	visible: true
+        height: 20
     },
 
     {
@@ -31,36 +31,32 @@ var entities = [
         y : 140,
         nextX: 60,
         nextY: 140,
+        speed: 0.1,
         width: 20,
-        height: 20,
-	visible: true
+        height: 20
     }
 ];
 
-var bullets = (function() {
-    var ret = [];
-    for ( var x = 0; x < 1; x++ ) {
-        ret[x] = {
-            x : 0,
-            y : 0,
-            originX : 0,
-            originY : 0,
-            destX : 100,
-            destY : 200,
-            width : 5,
-            height : 5,
-            nextX : 0,
-            nextY : 0,
-            speed : 0.1,
-            distanceTravelled: 0,
-            visible : true 
-        };
-    }
-    return ret;
-})();
+var Bullet = function() {
+    return {
+        x : 0,
+        y : 0,
+        originX : 0,
+        originY : 0,
+        destX : 0,
+        destY : 0,
+        width : 5,
+        height : 5,
+        nextX : 0,
+        nextY : 0,
+        speed : 0.3,
+        distanceTravelled: 0
+    };
+};
+
+var bullets = [];
 
 function draw( thing ) {
-    if ( thing.visible !== true ) return;
     ctx.fillStyle = '#444444';
     ctx.fillRect( thing.x, thing.y, thing.width, thing.height );
 }
@@ -76,24 +72,25 @@ function updateMain( ) {
 
     // movement (updates player)
     if ( keysDown[37]) {
-        entities[0].nextX = entities[0].x-1;
+        entities[0].nextX = entities[0].x-entities[0].speed * dt();
         //move left
     }
     if ( keysDown[39]) {
-        entities[0].nextX = entities[0].x+1;
+        entities[0].nextX = entities[0].x+entities[0].speed * dt();
         // move right
     }
     if ( keysDown[38]) {
-        entities[0].nextY = entities[0].y-1;
+        entities[0].nextY = entities[0].y-entities[0].speed * dt();
         // move up
     }
     if ( keysDown[40]) {
-        entities[0].nextY = entities[0].y+1;
+        entities[0].nextY = entities[0].y+entities[0].speed * dt();
         // move down
     }
     if ( keysDown[32]) {
     }
 
+    // set the entities x and y by nextX and nextY
     for ( e in entities ) {
         if ( !checkCollision( entities[e], entities ) 
                 && !checkOutsideBoundary( entities[e], ctx ) ) {
@@ -103,22 +100,28 @@ function updateMain( ) {
     }
 
     for ( b in bullets ) {
-        if ( bullets[b].visible ) {
-            var newBullet = nextBulletAlongLine( bullets[b] );
-            if ( checkCollision( newBullet, entities ) ) {
-		bullets[b].visible = false;
-		console.log("hit!");
-            }
-            if ( !checkOutsideBoundary ( newBullet, ctx ) ) {
-                bullets[b] = newBullet;
-                draw( bullets[b] );
-            }
+        var newBullet = nextBulletAlongLine( bullets[b] );
+
+        // if bullet hits something
+        if ( checkCollision( newBullet, entities ) ) {
+            delete bullets[b];
+            continue;
         }
+
+        // if bullet leaves stage
+        if ( checkOutsideBoundary ( newBullet, ctx ) ) {
+            delete bullets[b];
+            continue;
+        }
+
+        // else
+        bullets[b] = newBullet;
+        draw( bullets[b] );
     }
 
     // draw the guys
     for ( e in entities )
-	draw( entities[e] );
+        draw( entities[e] );
 
     // draw mouse coords
     ctx.font = "20px Verdana";
@@ -133,21 +136,32 @@ function updateMain( ) {
     });
 }
 
-function distance ( obj1, obj2 ) {
-    return Math.sqrt( obj1.x*obj2.x + obj1.y*obj2.y );
+function distance(point1,point2) {
+    var xs = 0;
+    var ys = 0;
+    xs = point2.x - point1.x;
+    xs = xs * xs;
+    ys = point2.y - point1.y;
+    ys = ys * ys;
+    return Math.sqrt( xs + ys );
 }
 
 function checkCollision (testObject, collisionObjects) {
+    var collides = false;
+
     for ( var i = 0; i < collisionObjects.length; i++ ){
+        if ( testObject === collisionObjects[i] ) continue;
         var object = collisionObjects[i];
-        if (object.x + object.width <= testObject.nextX ||
+        if (!(object.x + object.width <= testObject.nextX ||
             testObject.width + testObject.nextX <= object.x ||
             object.y + object.height <= testObject.nextY ||
-            testObject.height + testObject.nextY <= object.y) {
-            return false;
+            testObject.height + testObject.nextY <= object.y)) {
+            if ( testObject.shooter !== object )
+                collides = true;
         }
     }
-    return true;
+
+    return collides;
 }
 
 function checkOutsideBoundary (testObject, ctx) {
@@ -167,11 +181,37 @@ function nextBulletAlongLine(bullet) {
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
-    var nextBullet= Object.create( bullet );
-    nextBullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
-    nextBullet.x = Math.round(bullet.originX + nX3*nextBullet.distanceTravelled);
-    nextBullet.y = Math.round(bullet.originY + nY3*nextBullet.distanceTravelled);
-    return nextBullet;
+    bullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
+    bullet.x = Math.round(bullet.originX + nX3*bullet.distanceTravelled);
+    bullet.y = Math.round(bullet.originY + nY3*bullet.distanceTravelled);
+
+    // hacks
+    bullet.nextX = bullet.x;
+    bullet.nextY = bullet.y;
+
+    return bullet;
+}
+
+function shoot ( entity, x, y ) {
+    var b = new Bullet;
+    b.x = entities[0].x;
+    b.y = entities[0].y;
+    b.originX = entities[0].x;
+    b.originY = entities[0].y;
+    b.destX = e.offsetX;
+    b.destY = e.offsetY;
+    b.shooter = entity;
+
+    // find an unused slot in bullets
+    for ( var i = 0; i < bullets.length; i++ ) {
+        if ( bullets[i] === undefined ) {
+            bullets[i] = b;
+            return;
+        }
+    }
+
+    // otherwise tack it onto the end
+    bullets.push(b);
 }
 
 function updateSplashScreen ( splashSize ) {
@@ -192,10 +232,10 @@ function updateSplashScreen ( splashSize ) {
             updateSplashScreen( size );
         });
     } else {
-	addEventListener("mousedown", function (e) {
-	    then(Date.now());
-            updateMain();
-	}, false);
+        // request new frame
+        requestAnimFrame(function() {
+            updateSplashScreen( size );
+        });
     }
 }
 
@@ -209,6 +249,19 @@ addEventListener("keydown", function (e) {
 addEventListener("keyup", function (e) {
     delete keysDown[e.keyCode];
 }, false);
+
+addEventListener("mousedown", skipSplash, false);
+
+function mouseClick(e) {
+    shoot( entities[0], e.offsetX, e.offsetY );
+}
+
+function skipSplash (e) {
+    then(Date.now());
+    updateMain();
+    removeEventListener("mousedown", skipSplash, false);
+    addEventListener("mousedown", shoot, false);
+}
 
 addEventListener("mousemove", function (e) {
     mouseX(e.offsetX);
@@ -228,7 +281,7 @@ window.onload = function() {
     document.onkeydown=function(){return event.keyCode!=38 && event.keyCode!=40 && event.keyCode!=32};
 
     // run the game here
-    // spalsh screen first
-    // updateSplashScreen( 0 );
-    updateMain();
+    // splash screen first
+    updateSplashScreen( 0 );
+    //updateMain();
 };
