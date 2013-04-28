@@ -31,9 +31,15 @@ var entities = [
         y : 140,
         nextX: 60,
         nextY: 140,
+        destX: 60,
+        destY: 140,
+        victim: null,
         speed: 0.1,
         width: 20,
-        height: 20
+        height: 20,
+        destCooldown: 0,
+        huntCooldown: 0,
+        shootCooldown: 0
     }
 ];
 
@@ -66,6 +72,8 @@ var now = $R.state( Date.now() );
 var dt = $R(function(now, then){ return now - then; });
 dt.bindTo(now, then);
 
+var stateChangeTimer = 100;
+
 function updateMain( ) {
     now(Date.now());
     clearCanvas();
@@ -90,6 +98,61 @@ function updateMain( ) {
     if ( keysDown[32]) {
     }
 
+    // AI (updates AI)
+    //
+    // this state changing code should only happen every half second
+    if ( stateChangeTimer < 0 ) {
+        for ( var i = 1; i < entities.length; i++ ) { // everyone but the player
+            for ( var j = 0; j < entities.length; j++ ) {
+                if ( entities[i] === entities[j] ) continue; // that's a me!
+
+                if ( canSee( entities[i], entities[j] ) ) {
+                    entities[i].state = "attacking";
+                    entities[i].victim = entities[j];
+                    break; // found someone, that's enough for now
+                    // NOTE: this means the AI will gang up on player,
+                    // or if player is not around, will gang up on entities[1]
+                    // or if entities[1] is not around, will gang up on entities[2], etc...
+                } else {
+                    entities[i].state = "hunting";
+                }
+            }
+        }
+        stateChangeTimer = 500; // every half second
+    }
+
+    // AI Movement and shooting
+    for ( var i = 1; i < entities.length; i ++ ) {
+        var newEntity = nextThingAlongLine( entities[i] );
+
+        if ( newEntity.state == "attacking" ) {
+            // shoot 'nearby' the entity at random
+            if ( newEntity.shootCooldown < 0 ) {
+                shoot( newEntity,
+                       newEntity.victim.x + (Math.random() * 40) - 20,
+                       newEntity.victim.y + (Math.random() * 40) - 20 );
+                newEntity.shootCooldown = 100; // shoot every 100 milliseconds
+            }
+
+            if ( newEntity.huntCooldown < 0 ) {
+                // move to 'nearby' the entity at random
+                newEntity.destX = newEntity.victim.x + (Math.random() * 40) - 20;
+                newEntity.destY = newEntity.victim.y + (Math.random() * 40) - 20;
+                newEntity.huntCooldown = 50; // change dest every 50 milliseconds
+            }
+        }
+        if ( newEntity.state == "hunting") {
+            if ( newEntity.destCooldown < 0 ) {
+                newEntity.destX = newEntity.x + (Math.random() * 100) - 50;
+                newEntity.destY = newEntity.y + (Math.random() * 100) - 50;
+                newEntity.destCooldown = 200; // change hunt dest every 200 milliseconds
+            }
+        }
+
+        entities[i] = newEntity;
+        draw(entities[i]);
+    }
+
     // set the entities x and y by nextX and nextY
     for ( e in entities ) {
         if ( !checkCollision( entities[e], entities ) 
@@ -100,7 +163,7 @@ function updateMain( ) {
     }
 
     for ( b in bullets ) {
-        var newBullet = nextBulletAlongLine( bullets[b] );
+        var newBullet = nextThingAlongLine( bullets[b] );
 
         // if bullet hits something
         if ( checkCollision( newBullet, entities ) ) {
@@ -119,16 +182,12 @@ function updateMain( ) {
         draw( bullets[b] );
     }
 
-    // draw the guys
-    for ( e in entities )
-        draw( entities[e] );
-
-    // draw mouse coords
-    ctx.font = "20px Verdana";
-    ctx.fillStyle = "#ff0000";
-    ctx.fillText(mouseCoords(), 350, 350);
+    // draw the player
+    draw( entities[0] );
     
     then(Date.now()); // then is now now
+
+    stateChangeTimer--; // for the next possible AI statechange
 
     // request new frame
     requestAnimFrame(function() {
@@ -174,22 +233,22 @@ function checkOutsideBoundary (testObject, ctx) {
        return false; 
 }
 
-function nextBulletAlongLine(bullet) {
-    var x3 = bullet.destX - bullet.originX;
-    var y3 = bullet.destY - bullet.originY;
+function nextThingAlongLine(thing) {
+    var x3 = thing.destX - thing.originX;
+    var y3 = thing.destY - thing.originY;
     var d3 = Math.sqrt ( x3*x3 + y3*y3 ); 
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
-    bullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
-    bullet.x = Math.round(bullet.originX + nX3*bullet.distanceTravelled);
-    bullet.y = Math.round(bullet.originY + nY3*bullet.distanceTravelled);
+    thing.distanceTravelled = thing.distanceTravelled + (dt() * thing.speed);
+    thing.x = Math.round(thing.originX + nX3*thing.distanceTravelled);
+    thing.y = Math.round(thing.originY + nY3*thing.distanceTravelled);
 
     // hacks
-    bullet.nextX = bullet.x;
-    bullet.nextY = bullet.y;
+    thing.nextX = thing.x;
+    thing.nextY = thing.y;
 
-    return bullet;
+    return thing;
 }
 
 function shoot ( entity, x, y ) {
@@ -212,6 +271,13 @@ function shoot ( entity, x, y ) {
 
     // otherwise tack it onto the end
     bullets.push(b);
+}
+
+function canSee( entity1, entity2 ) {
+    //var ret = false;
+    //while ( )
+    //return ret;
+    return false;
 }
 
 function updateSplashScreen ( splashSize ) {
