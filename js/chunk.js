@@ -236,9 +236,11 @@ function updateMain( ) {
             //if we collided into a player
             if (entity.actualJunk !== undefined) {
                 entity.actualJunk++;
+                entity.throwableJunk++;
                 console.log("Player " + entity.playerId + " gains actual junk\n");
                 if (newBullet.shooter.actualJunk > 0) {
                     newBullet.shooter.actualJunk--;
+                    newBullet.shooter.throwableJunk--;
                     //console.log("Player " + newBullet.shooter.playerId + " loses actual junk\n");
                 }
             } else {
