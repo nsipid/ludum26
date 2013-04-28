@@ -42,10 +42,10 @@ var obstacles = [
 
 var entities = [
     {
-        x: 240,
-        y: 40,
-        nextX: 240,
-        nextY: 40,
+        x: 740,
+        y: 60,
+        nextX: 740,
+        nextY: 60,
         speed: 0.1,
         width: 74,
         height: 101,
@@ -59,9 +59,9 @@ var entities = [
     },
     {
         x: 60,
-        y: 140,
+        y: 60,
         nextX: 60,
-        nextY: 140,
+        nextY: 60,
         speed: 0.1,
         width: 74,
         height: 101,
@@ -71,9 +71,9 @@ var entities = [
         throwableJunk: 10,
         playerId: 2,
         originX: 60,
-        originY: 140,
-        destX: 100,
-        destY: 160,
+        originY: 60,
+        destX: 65,
+        destY: 65,
         victim: null,
         distanceTravelled: 0,
         destCooldown: 0,
@@ -83,10 +83,10 @@ var entities = [
         lastSpriteTime: 0,
     },
     {
-        x: 140,
-        y: 40,
-        nextX: 140,
-        nextY: 40,
+        x: 740,
+        y: 540,
+        nextX: 740,
+        nextY: 540,
         speed: 0.1,
         width: 74,
         height: 101,
@@ -95,10 +95,10 @@ var entities = [
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 3,
-        originX: 140,
-        originY: 40,
-        destX: 30,
-        destY: 40,
+        originX: 740,
+        originY: 540,
+        destX: 745,
+        destY: 545,
         victim: null,
         distanceTravelled: 0,
         destCooldown: 0,
@@ -108,10 +108,10 @@ var entities = [
         lastSpriteTime: 0,
     },
     {
-        x: 40,
-        y: 40,
-        nextX: 40,
-        nextY: 40,
+        x: 60,
+        y: 540,
+        nextX: 60,
+        nextY: 540,
         speed: 0.1,
         width: 74,
         height: 101,
@@ -120,10 +120,10 @@ var entities = [
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
-        originX: 40,
-        originY: 40,
-        destX: 60,
-        destY: 140,
+        originX: 60,
+        originY: 540,
+        destX: 65,
+        destY: 545,
         victim: null,
         distanceTravelled: 0,
         destCooldown: 0,
@@ -226,11 +226,11 @@ function updateMain( ) {
                     // or if player is not around, will gang up on entities[1]
                     // or if entities[1] is not around, will gang up on entities[2], etc...
                 } else {
-                    entities[i].state = "hunting";
+                    entities[i].state = "seeking";
                 }
             }
         }
-        stateChangeTimer = 500; // every half second
+        stateChangeTimer = 100; // every 100ms
     }
 
     // AI Movement and shooting
@@ -245,29 +245,45 @@ function updateMain( ) {
                 shoot( newEntity,
                        newEntity.victim.x + (Math.random() * 40) - 20,
                        newEntity.victim.y + (Math.random() * 40) - 20 );
-                newEntity.shootCooldown = 100; // shoot every 100 milliseconds
+                newEntity.shootCooldown = 300; // shoot every 300ms
             }
 
+	    // move to 'nearby' the entity at random
             if ( newEntity.huntCooldown < 0 ) {
-                // move to 'nearby' the entity at random
-                newEntity.destX = newEntity.victim.x + (Math.random() * 40) - 20;
-                newEntity.destY = newEntity.victim.y + (Math.random() * 40) - 20;
-                newEntity.huntCooldown = 50; // change dest every 50 milliseconds
+		// let's make sure the destination isn't invalid
+		var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
+		while ( checkOutsideBoundary( pending ) ) {
+                    newEntity.destX = newEntity.victim.x + (Math.random() * 200) - 100;
+                    newEntity.destY = newEntity.victim.y + (Math.random() * 200) - 100;
+		    pending.nextX = newEntity.destX;
+		    pending.nextY = newEntity.destY;
+		}
+                newEntity.originX = newEntity.x;
+                newEntity.originY = newEntity.y;
+                newEntity.huntCooldown = 100; // change dest every 100ms
+		newEntity.distanceTravelled = 0; // need to reset for getNextThing
             }
         }
-        if ( newEntity.state == "hunting") {
+        if ( newEntity.state == "seeking") {
             if ( newEntity.destCooldown < 0 ) {
-                newEntity.destX = newEntity.x + (Math.random() * 100) - 50;
-                newEntity.destY = newEntity.y + (Math.random() * 100) - 50;
+		// let's make sure the destination isn't invalid
+		var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
+		while ( checkOutsideBoundary( pending ) ) {
+                    newEntity.destX = newEntity.x + (Math.random() * 200) - 100;
+                    newEntity.destY = newEntity.y + (Math.random() * 200) - 100;
+		    pending.nextX = newEntity.destX;
+		    pending.nextY = newEntity.destY;
+		}
+
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.destCooldown = 200; // change hunt dest every 200 milliseconds
 		newEntity.distanceTravelled = 0; // need to reset for getNextThing
             }
         }
-	newEntity.destCooldown--;
-	newEntity.huntCooldown--;
-	newEntity.shootCooldown--;
+	newEntity.destCooldown-=dt();
+	newEntity.huntCooldown-=dt();
+	newEntity.shootCooldown-=dt();
         entities[i] = newEntity;
 	drawCharacter( entities[i] );
     }
@@ -276,6 +292,7 @@ function updateMain( ) {
     updateXY(entities[0]);
     drawCharacter( entities[0] );
 
+    // update the bullets
     for (b in bullets) {
         var newBullet = nextThingAlongLine(bullets[b]);
 
@@ -401,11 +418,11 @@ function checkCollision(testObject, collisionObjects, onCollision) {
     return collides;
 }
 
-function checkOutsideBoundary(testObject, ctx) {
+function checkOutsideBoundary(testObject) {
     if (testObject.nextX < 0
         || testObject.nextY < 0
-        || testObject.nextX + testObject.width > ctx.canvas.width
-        || testObject.nextY + testObject.height > ctx.canvas.height) {
+        || testObject.nextX + testObject.width > canvas.width
+        || testObject.nextY + testObject.height > canvas.height) {
         return true;
     }
     return false;
