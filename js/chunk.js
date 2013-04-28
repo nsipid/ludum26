@@ -17,27 +17,29 @@ function clearCanvas () {
 
 var entities = [
     {
-        x: 40,
+        x: 240,
         y: 40,
-        nextX: 40,
+        nextX: 240,
         nextY: 40,
         width: 20,
-        height: 20
+        height: 20,
+	visible: true
     },
 
     {
-        x : 140,
+        x : 60,
         y : 140,
-        nextX: 140,
+        nextX: 60,
         nextY: 140,
         width: 20,
-        height: 20
+        height: 20,
+	visible: true
     }
 ];
 
 var bullets = (function() {
     var ret = [];
-    for ( var x = 0; x < 50; x++ ) {
+    for ( var x = 0; x < 1; x++ ) {
         ret[x] = {
             x : 0,
             y : 0,
@@ -49,7 +51,7 @@ var bullets = (function() {
             height : 5,
             nextX : 0,
             nextY : 0,
-            speed : 10,
+            speed : 0.1,
             distanceTravelled: 0,
             visible : true 
         };
@@ -57,16 +59,10 @@ var bullets = (function() {
     return ret;
 })();
 
-function draw( guy ) {
+function draw( thing ) {
+    if ( thing.visible !== true ) return;
     ctx.fillStyle = '#444444';
-    ctx.fillRect( guy.x, guy.y, guy.width, guy.height );
-}
-
-function findFreeBullet() {
-    for ( b in bullets ) {
-        if ( !bullets[b].visible )
-            return bullets[b];
-    }
+    ctx.fillRect( thing.x, thing.y, thing.width, thing.height );
 }
 
 var then = $R.state( Date.now() );
@@ -96,11 +92,6 @@ function updateMain( ) {
         // move down
     }
     if ( keysDown[32]) {
-        // chunk your stuff
-        var b = findFreeBullet();
-        b.visible = true;
-        targetX = mouseX;
-        targetY = mouseY;
     }
 
     for ( e in entities ) {
@@ -117,19 +108,23 @@ function updateMain( ) {
     for ( b in bullets ) {
         if ( bullets[b].visible ) {
             var newBullet = nextBulletAlongLine( bullets[b] );
-            if ( checkCollision( newBullet, bullets ) ) {
-                bullets[b].visible = false;
+            if ( checkCollision( newBullet, entities ) ) {
+		bullets[b].visible = false;
+		console.log("hit!");
             }
-            if ( !checkOutsideBoundary ( bullets[b], ctx ) ) {
+            if ( !checkOutsideBoundary ( newBullet, ctx ) ) {
                 bullets[b] = newBullet;
                 draw( bullets[b] );
             }
+	    else {
+		console.log("bullshit");
+	    }
         }
     }
 
     // draw the guys
     for ( e in entities )
-        draw( entities[e] );
+	draw( entities[e] );
 
     // draw mouse coords
     ctx.font = "20px Verdana";
@@ -179,10 +174,17 @@ function nextBulletAlongLine(bullet) {
     var nY3 = y3 / d3;
 
     var nextBullet= {};
-    nextBullet.prototype = bullet;
     nextBullet.distanceTravelled = bullet.distanceTravelled + (dt() * bullet.speed);
-    nextBullet.x = bullet.originX + nX3*nextBullet.distanceTravelled;
-    nextBullet.y = bullet.originY + nY3*nextBullet.distanceTravelled;
+    nextBullet.x = Math.round(bullet.originX + nX3*nextBullet.distanceTravelled);
+    nextBullet.y = Math.round(bullet.originY + nY3*nextBullet.distanceTravelled);
+    nextBullet.width = bullet.width;
+    nextBullet.height = bullet.height;
+    nextBullet.originX = bullet.originX;
+    nextBullet.originY = bullet.originY;
+    nextBullet.destX = bullet.destX;
+    nextBullet.destY = bullet.destY;
+    nextBullet.speed= bullet.speed;
+    nextBullet.visible = bullet.visible;
     return nextBullet;
 }
 
@@ -205,6 +207,7 @@ function updateSplashScreen ( splashSize ) {
         });
     } else {
 	addEventListener("mousedown", function (e) {
+	    then(Date.now());
             updateMain();
 	}, false);
     }
@@ -240,5 +243,6 @@ window.onload = function() {
 
     // run the game here
     // spalsh screen first
-    updateSplashScreen( 0 );
+    // updateSplashScreen( 0 );
+    updateMain();
 };
