@@ -16,6 +16,30 @@ function clearCanvas() {
     ctx.canvas.width = ctx.canvas.width;
 }
 
+var obstacles = [
+    {
+	x: 300,
+	y: 40,
+	width: 200,
+	height: 20,
+	color: "#558866"
+    },
+    {
+	x: 40,
+	y: 170,
+	width: 30,
+	height: 200,
+	color: "#558866"
+    },
+    {
+	x: 240,
+	y: 170,
+	width: 70,
+	height: 90,
+	color: "#558866"
+    }
+];
+
 var entities = [
     {
         x: 240,
@@ -126,6 +150,10 @@ function drawCharacter( thing ) {
     ctx.drawImage( thing.img, thing.x, thing.y, thing.width, thing.height );
 }
 
+function drawObstacle( obstacle ) {
+    drawBullet( obstacle ); // lol
+}
+
 function drawBullet( thing ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
@@ -153,6 +181,11 @@ function updateMain( ) {
         // move down
     }
     if ( keysDown[32]) {
+    }
+
+    // drawing the obstacles
+    for ( o in obstacles ) {
+	drawObstacle( obstacles[o] );
     }
 
     // AI (updates AI)
@@ -288,8 +321,10 @@ function updateMain( ) {
 }
 
 function updateXY(thing) {
-    if (!checkCollision(thing, entities)
-        && !checkOutsideBoundary(thing, ctx)) {
+    if (!checkCollision(thing, entities) &&
+	!checkCollision(thing, obstacles) &&
+	!checkOutsideBoundary(thing, ctx)) {
+
         thing.x = thing.nextX;
         thing.y = thing.nextY;
     }
