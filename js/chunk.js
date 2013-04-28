@@ -198,8 +198,8 @@ function shoot ( entity, x, y ) {
     b.y = entities[0].y;
     b.originX = entities[0].x;
     b.originY = entities[0].y;
-    b.destX = e.offsetX;
-    b.destY = e.offsetY;
+    b.destX = x;
+    b.destY = y;
     b.shooter = entity;
 
     // find an unused slot in bullets
@@ -260,7 +260,7 @@ function skipSplash (e) {
     then(Date.now());
     updateMain();
     removeEventListener("mousedown", skipSplash, false);
-    addEventListener("mousedown", shoot, false);
+    addEventListener("mousedown", mouseClick, false);
 }
 
 addEventListener("mousemove", function (e) {
