@@ -23,13 +23,15 @@ var entities = [
         nextX: 240,
         nextY: 40,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
-        playerId: 1
+        playerId: 1,
+        spriteState: 0,
+        lastSpriteTime: 0,
     },
     {
         x: 60,
@@ -37,10 +39,10 @@ var entities = [
         nextX: 60,
         nextY: 140,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 2,
@@ -52,7 +54,9 @@ var entities = [
         distanceTravelled: 0,
         destCooldown: 0,
         huntCooldown: 0,
-        shootCooldown: 0
+        shootCooldown: 0,
+        spriteState: 0,
+        lastSpriteTime: 0,
     },
     {
         x: 140,
@@ -60,10 +64,10 @@ var entities = [
         nextX: 140,
         nextY: 40,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 3,
@@ -75,7 +79,9 @@ var entities = [
         distanceTravelled: 0,
         destCooldown: 0,
         huntCooldown: 0,
-        shootCooldown: 0
+        shootCooldown: 0,
+        spriteState: 0,
+        lastSpriteTime: 0,
     },
     {
         x: 40,
@@ -83,10 +89,10 @@ var entities = [
         nextX: 40,
         nextY: 40,
         speed: 0.1,
-        width: 60,
-        height: 60,
+        width: 74,
+        height: 101,
 	img: document.createElement('img'),
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/douchebag.png?raw=true',
+        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/dbag_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
@@ -98,7 +104,9 @@ var entities = [
         distanceTravelled: 0,
         destCooldown: 0,
         huntCooldown: 0,
-        shootCooldown: 0
+        shootCooldown: 0,
+        spriteState: 0,
+        lastSpriteTime: 0,
     }
 ];
 
@@ -123,12 +131,25 @@ var bullets = [];
 
 function drawCharacter( thing ) {
     ctx.fillStyle = '#444444';
-    ctx.drawImage( thing.img, thing.x, thing.y, thing.width, thing.height );
+    if (thing.spriteState === 0) {
+        ctx.drawImage(thing.img, 0, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
+    } else {
+        ctx.drawImage(thing.img, thing.width, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
+    }
 }
 
 function drawBullet( thing ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
+}
+
+function updateSpriteState(sprite) {
+    sprite.lastSpriteTime += dt();
+    if (sprite.lastSpriteTime === 0 || sprite.lastSpriteTime >= 100) {
+        sprite.lastSpriteTime = 0;
+        sprite.spriteState++;
+        sprite.spriteState %= 2;
+    }
 }
 
 function updateMain( ) {
@@ -138,18 +159,22 @@ function updateMain( ) {
     // movement (updates player)
     if (keysDown[37]) {
         entities[0].nextX = entities[0].x - entities[0].speed * dt();
+        updateSpriteState(entities[0]);
         //move left
     }
     if (keysDown[39]) {
         entities[0].nextX = entities[0].x + entities[0].speed * dt();
+        updateSpriteState(entities[0]);
         // move right
     }
     if (keysDown[38]) {
         entities[0].nextY = entities[0].y - entities[0].speed * dt();
+        updateSpriteState(entities[0]);
         // move up
     }
     if (keysDown[40]) {
         entities[0].nextY = entities[0].y + entities[0].speed * dt();
+        updateSpriteState(entities[0]);
         // move down
     }
     if ( keysDown[32]) {
