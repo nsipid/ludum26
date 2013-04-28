@@ -17,15 +17,6 @@ function clearCanvas() {
 
 // need to add
 /*
-        originX: 60,
-        originY: 140,
-        destX: 60,
-        destY: 140,
-        victim: null,
-        distanceTravelled: 0,
-        destCooldown: 0,
-        huntCooldown: 0,
-        shootCooldown: 0
 */
 
 var entities = [
@@ -41,7 +32,7 @@ var entities = [
         imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
-        playerId: 1,
+        playerId: 1
     },
     {
         x: 60,
@@ -56,6 +47,15 @@ var entities = [
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 2,
+        originX: 60,
+        originY: 140,
+        destX: 100,
+        destY: 160,
+        victim: null,
+        distanceTravelled: 0,
+        destCooldown: 0,
+        huntCooldown: 0,
+        shootCooldown: 0
     },
     {
         x: 140,
@@ -70,6 +70,15 @@ var entities = [
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 3,
+        originX: 140,
+        originY: 40,
+        destX: 30,
+        destY: 40,
+        victim: null,
+        distanceTravelled: 0,
+        destCooldown: 0,
+        huntCooldown: 0,
+        shootCooldown: 0
     },
     {
         x: 40,
@@ -84,6 +93,15 @@ var entities = [
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
+        originX: 40,
+        originY: 40,
+        destX: 60,
+        destY: 140,
+        victim: null,
+        distanceTravelled: 0,
+        destCooldown: 0,
+        huntCooldown: 0,
+        shootCooldown: 0
     }
 ];
 
