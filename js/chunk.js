@@ -354,18 +354,18 @@ function nextBulletAlongLine(bullet) {
 
 function shoot(entity, x, y) {
     if (entity.throwableJunk === 0) {
-        console.log("Player " + entity.playerId + " had no junk to throw.");
+        //console.log("Player " + entity.playerId + " had no junk to throw.");
         return;
     }
 
     entity.throwableJunk--;
-    console.log("Player " + entity.playerId + " loses throwable junk\n");
+    //console.log("Player " + entity.playerId + " loses throwable junk\n");
 
     var b = new Bullet;
-    b.x = entities[0].x;
-    b.y = entities[0].y;
-    b.originX = entities[0].x;
-    b.originY = entities[0].y;
+    b.x = entity.x;
+    b.y = entity.y;
+    b.originX = entity.x;
+    b.originY = entity.y;
     b.destX = x;
     b.destY = y;
     b.shooter = entity;
