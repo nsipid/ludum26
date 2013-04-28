@@ -118,9 +118,13 @@ var now = $R.state(Date.now());
 var dt = $R(function (now, then) { return now - then; });
 dt.bindTo(now, then);
 
+<<<<<<< HEAD
 var stateChangeTimer = 100;
 
 function updateMain( ) {
+=======
+function updateMain() {
+>>>>>>> 68263af9523ee04613cbef8f5fce52d13a95b0b4
     now(Date.now());
     clearCanvas();
 
@@ -141,7 +145,7 @@ function updateMain( ) {
         entities[0].nextY = entities[0].y + entities[0].speed * dt();
         // move down
     }
-    if ( keysDown[32]) {
+    if (keysDown[32]) {
     }
 
     // AI (updates AI)
@@ -212,6 +216,10 @@ function updateMain( ) {
         }
     }
 
+<<<<<<< HEAD
+    for ( b in bullets ) {
+        var newBullet = nextThingAlongLine( bullets[b] );
+=======
     for (b in bullets) {
         var newBullet = nextBulletAlongLine(bullets[b]);
 
@@ -230,6 +238,7 @@ function updateMain( ) {
                 console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
             }
         }
+>>>>>>> 68263af9523ee04613cbef8f5fce52d13a95b0b4
 
         // if bullet hits something
         if (checkCollision(newBullet, entities, onCollision)) {
@@ -251,6 +260,11 @@ function updateMain( ) {
     }
 
     // draw the guys
+<<<<<<< HEAD
+    for ( e in entities )
+	draw( entities[e] );
+    
+=======
     for (e in entities)
         drawCharacter( entities[e] );
 
@@ -258,7 +272,8 @@ function updateMain( ) {
     ctx.font = "20px Verdana";
     ctx.fillStyle = "#ff0000";
     ctx.fillText(mouseCoords(), 350, 350);
-    
+
+>>>>>>> 68263af9523ee04613cbef8f5fce52d13a95b0b4
     then(Date.now()); // then is now now
 
     stateChangeTimer--; // for the next possible AI statechange
@@ -347,18 +362,11 @@ function shoot(entity, x, y) {
     b.destY = y;
     b.shooter = entity;
 
-    // find an unused slot in bullets
-    for ( var i = 0; i < bullets.length; i++ ) {
-        if ( bullets[i] === undefined ) {
-            bullets[i] = b;
-            return;
-        }
-    }
-
     // otherwise tack it onto the end
     bullets.push(b);
 }
 
+<<<<<<< HEAD
 function canSee( entity1, entity2 ) {
     var ret = false;
     if ( distance(entity1, entity2) < 100 ) ret = true;
@@ -367,6 +375,10 @@ function canSee( entity1, entity2 ) {
 
 function updateSplashScreen ( splashSize ) {
     if ( splashSize < 100 ) {
+=======
+function updateSplashScreen(splashSize) {
+    if (splashSize < 100) {
+>>>>>>> 68263af9523ee04613cbef8f5fce52d13a95b0b4
 
         clearCanvas();
 
