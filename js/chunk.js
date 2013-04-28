@@ -16,6 +16,30 @@ function clearCanvas() {
     ctx.canvas.width = ctx.canvas.width;
 }
 
+var obstacles = [
+    {
+	x: 300,
+	y: 40,
+	width: 200,
+	height: 20,
+	color: "#558866"
+    },
+    {
+	x: 40,
+	y: 170,
+	width: 30,
+	height: 200,
+	color: "#558866"
+    },
+    {
+	x: 240,
+	y: 170,
+	width: 70,
+	height: 90,
+	color: "#558866"
+    }
+];
+
 var entities = [
     {
         x: 240,
@@ -138,6 +162,10 @@ function drawCharacter( thing ) {
     }
 }
 
+function drawObstacle( obstacle ) {
+    drawBullet( obstacle ); // lol
+}
+
 function drawBullet( thing ) {
     ctx.fillStyle = '#444444';
     ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
@@ -157,27 +185,33 @@ function updateMain( ) {
     clearCanvas();
 
     // movement (updates player)
-    if (keysDown[37]) {
+    if (keysDown[37] || keysDown[65]) {
         entities[0].nextX = entities[0].x - entities[0].speed * dt();
         updateSpriteState(entities[0]);
         //move left
     }
-    if (keysDown[39]) {
+    if (keysDown[39] || keysDown[68]) {
         entities[0].nextX = entities[0].x + entities[0].speed * dt();
         updateSpriteState(entities[0]);
         // move right
     }
-    if (keysDown[38]) {
+    if (keysDown[38] || keysDown[87]) {
         entities[0].nextY = entities[0].y - entities[0].speed * dt();
         updateSpriteState(entities[0]);
         // move up
     }
-    if (keysDown[40]) {
+    if (keysDown[40] || keysDown[83]) {
         entities[0].nextY = entities[0].y + entities[0].speed * dt();
         updateSpriteState(entities[0]);
         // move down
     }
     if ( keysDown[32]) {
+	// do something with spacebar
+    }
+
+    // drawing the obstacles
+    for ( o in obstacles ) {
+	drawObstacle( obstacles[o] );
     }
 
     // AI (updates AI)
@@ -206,6 +240,8 @@ function updateMain( ) {
     // AI Movement and shooting
     for ( var i = 1; i < entities.length; i ++ ) {
         var newEntity = nextThingAlongLine( entities[i] );
+
+	updateXY(newEntity);
 
         if ( newEntity.state == "attacking" ) {
             // shoot 'nearby' the entity at random
@@ -237,25 +273,17 @@ function updateMain( ) {
 	newEntity.huntCooldown--;
 	newEntity.shootCooldown--;
         entities[i] = newEntity;
+	drawCharacter( entities[i] );
     }
 
-    // set the entities x and y by nextX and nextY
-    for (e in entities) {
-        if (!checkCollision(entities[e], entities)
-                && !checkOutsideBoundary(entities[e], ctx)) {
-            entities[e].x = entities[e].nextX;
-            entities[e].y = entities[e].nextY;
-        }
-    }
+    // dont' forget the player
+    updateXY(entities[0]);
+    drawCharacter( entities[0] );
 
     for (b in bullets) {
         var newBullet = nextThingAlongLine(bullets[b]);
 
-        if (!checkCollision(newBullet, entities)
-                && !checkOutsideBoundary(newBullet, ctx)) {
-            newBullet.x = newBullet.nextX;
-            newBullet.y = newBullet.nextY;
-        }
+	updateXY(newBullet);
 
         var onCollision = function (entity) {
             //if we collided into a player
@@ -293,10 +321,6 @@ function updateMain( ) {
         drawBullet( bullets[b] );
     }
 
-    // draw the guys
-    for (e in entities)
-        drawCharacter( entities[e] );
-
     // draw debug info
     for (e in entities) {
 	ctx.font = "20px Verdana";
@@ -307,6 +331,9 @@ function updateMain( ) {
 	ctx.fillText("actual junk: " + entities[e].actualJunk,
 		     entities[e].x,
 		     entities[e].y - 20);
+	if (e !== '0') ctx.fillText(entities[e].state,
+				  entities[e].x + 50,
+				  entities[e].y + 30);
     }
     
     then(Date.now()); // then is now now
@@ -317,6 +344,16 @@ function updateMain( ) {
     requestAnimFrame(function () {
         updateMain();
     });
+}
+
+function updateXY(thing) {
+    if (!checkCollision(thing, entities) &&
+	!checkCollision(thing, obstacles) &&
+	!checkOutsideBoundary(thing, ctx)) {
+
+        thing.x = thing.nextX;
+        thing.y = thing.nextY;
+    }
 }
 
 function distance(point1, point2) {
@@ -407,7 +444,7 @@ function shoot(entity, x, y) {
 
 function canSee( entity1, entity2 ) {
     var ret = false;
-    if ( distance(entity1, entity2) < 100 ) ret = true;
+    if ( distance(entity1, entity2) < 200 ) ret = true;
     return ret;
 }
 
