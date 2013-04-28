@@ -240,7 +240,6 @@ function updateMain( ) {
                 console.log("Player " + entity.playerId + " gains actual junk\n");
                 if (newBullet.shooter.actualJunk > 0) {
                     newBullet.shooter.actualJunk--;
-                    newBullet.shooter.throwableJunk--;
                     //console.log("Player " + newBullet.shooter.playerId + " loses actual junk\n");
                 }
             } else {
