@@ -400,9 +400,9 @@ function updateXY(thing) {
 
         if (thing.spriteState !== undefined) {
             if (thing.x < thing.nextX)
-                thing.flipped = true;
-            else if (thing.x > thing.nextX)
                 thing.flipped = false;
+            else if (thing.x > thing.nextX)
+                thing.flipped = true;
 
             updateSpriteState(thing);
         }
@@ -549,7 +549,7 @@ function init() {
     // this is dumb, but...
     for ( e in entities ) {
         entities[e].img.src = entities[e].imageSrc;
-        entities[e].flippedImg.src = entities[e].flippedImageSrc;
+        entities[e].flippedImg.src = entities[e].flippedImgSrc;
     }
 
     // Keyboard 'buffer'
