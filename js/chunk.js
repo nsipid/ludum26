@@ -22,21 +22,32 @@ var obstacles = [
 	y: 40,
 	width: 400,
 	height: 40,
-	color: "#558866"
+	img: document.createElement('img'),
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-boxes-small.png"
     },
     {
 	x: 180,
 	y: 170,
 	width: 60,
 	height: 400,
-	color: "#558866"
+	img: document.createElement('img'),
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-couch-small.png"
     },
     {
 	x: 540,
 	y: 270,
 	width: 70,
 	height: 90,
-	color: "#558866"
+	img: document.createElement('img'),
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-crate-small.png"
+    },
+    {
+	x: 240,
+	y: 220,
+	width: 70,
+	height: 90,
+	img: document.createElement('img'),
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-paint-cans-small.png"
     }
 ];
 
@@ -176,17 +187,12 @@ function drawCharacter( thing ) {
     }
 }
 
-function drawObstacle( obstacle ) {
-    // should be boxes, crates, fridges, couches
-    ctx.fillStyle = '#444444';
-    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+var drawThing = function ( thing ) {
+    ctx.drawImage(thing.img, 0, 0, thing.img.width, thing.img.height, thing.x, thing.y, thing.img.width, thing.img.height);
 }
-
-function drawBullet( thing ) {
-    // should be junk at random (especially potato)
-    ctx.fillStyle = '#779922';
-    ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
-}
+// aliases
+var drawObstacle = drawThing;
+var drawBullet = drawThing;
 
 function updateSpriteState(sprite) {
     sprite.lastSpriteTime += dt();
@@ -511,6 +517,7 @@ function shoot(entity, x, y) {
     b.destX = x;
     b.destY = y;
     b.shooter = entity;
+    b.img = bulletType[Math.floor(Math.random() * bulletType.length)];
 
     // find an unused slot in bullets
     for ( var i = 0; i < bullets.length; i++ ) {
@@ -577,6 +584,21 @@ function init() {
         entities[e].img.src = entities[e].imageSrc;
         entities[e].flippedImg.src = entities[e].flippedImgSrc;
     }
+
+    bulletType = [];
+    img1 = document.createElement('img');
+    img1.src = "https://github.com/nsipid/ludum26/raw/master/images/object-blender.png";
+    bulletType.push(img1);
+    img2 = document.createElement('img');
+    img2.src = "https://github.com/nsipid/ludum26/raw/master/images/object-cardboardbox.png";
+    bulletType.push(img2);
+    img3 = document.createElement('img');
+    img3.src = "https://github.com/nsipid/ludum26/raw/master/images/object-toaster.png";
+    bulletType.push(img3);
+    img4 = document.createElement('img');
+    img4.src = "https://github.com/nsipid/ludum26/raw/master/images/object-onepaintcan.png";
+    bulletType.push(img4);
+
 
     // Keyboard 'buffer'
     keysDown = {};
