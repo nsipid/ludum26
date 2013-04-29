@@ -206,22 +206,26 @@ function updateSpriteState(sprite) {
 function updateMain( ) {
     now(Date.now());
     clearCanvas();
+    for (var e in entities) {
+        entities[e].nextX = entities[e].x;
+        entities[e].nextY = entities[e].y;
+    }
 
     // movement (updates player)
     if (keysDown[37] || keysDown[65]) {
-        entities[0].nextX = entities[0].x - entities[0].speed * dt();
+        entities[0].nextX = Math.floor(entities[0].x - entities[0].speed * dt());
         //move left
     }
     if (keysDown[39] || keysDown[68]) {
-        entities[0].nextX = entities[0].x + entities[0].speed * dt();
+        entities[0].nextX = Math.floor(entities[0].x + entities[0].speed * dt());
         // move right
     }
     if (keysDown[38] || keysDown[87]) {
-        entities[0].nextY = entities[0].y - entities[0].speed * dt();
+        entities[0].nextY = Math.floor(entities[0].y - entities[0].speed * dt());
         // move up
     }
     if (keysDown[40] || keysDown[83]) {
-        entities[0].nextY = entities[0].y + entities[0].speed * dt();
+        entities[0].nextY = Math.floor(entities[0].y + entities[0].speed * dt());
         // move down
     }
     if ( keysDown[32]) {
@@ -396,7 +400,7 @@ function updateMain( ) {
 
         // else
         bullets[b] = newBullet;
-        drawBullet( bullets[b] );
+        drawBullet(bullets[b]);
     }
 
     // draw debug info
