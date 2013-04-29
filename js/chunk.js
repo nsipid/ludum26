@@ -268,8 +268,8 @@ function updateMain( ) {
 	    // move far from the entity at random
             if ( newEntity.huntCooldown < 0 ) {
 		var destination = findPointNear( newEntity.x, newEntity.y, 400 );
-		newEntity.destX = destination.x;
-		newEntity.destY = destination.y;
+		newEntity.destX = destination.nextX;
+		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.fleeCooldown = 300; // change flee dest every 300ms
@@ -289,8 +289,8 @@ function updateMain( ) {
 	    // move to 'nearby' the entity at random
             if ( newEntity.huntCooldown < 0 ) {
 		destination = findPointNear( newEntity.victim.x, newEntity.victim.y, 150 );
-		newEntity.destX = destination.x;
-		newEntity.destY = destination.y;
+		newEntity.destX = destination.nextX;
+		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.huntCooldown = 100; // change dest every 100ms
@@ -300,9 +300,9 @@ function updateMain( ) {
 
         if ( newEntity.state == "seeking") {
             if ( newEntity.destCooldown < 0 ) {
-		destination = findPointNear( newEntity.victim.x, newEntity.victim.y, 150 );
-		newEntity.destX = destination.x;
-		newEntity.destY = destination.y;
+		destination = findPointNear( newEntity.x, newEntity.y, 150 );
+		newEntity.destX = destination.nextX;
+		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.destCooldown = 500; // change hunt dest every 500ms
