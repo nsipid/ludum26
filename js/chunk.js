@@ -242,6 +242,30 @@ function updateMain( ) {
 
 	updateXY(newEntity);
 
+	var findPointNear = function ( x, y, dist ) {
+	    // let's make sure the destination isn't invalid
+	    var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
+	    while ( checkOutsideBoundary( pending ) ) {
+                pending.nextX = x + (Math.random() * dist * 2) - dist;
+                pending.nextY = y + (Math.random() * dist * 2) - dist;
+	    }
+
+	    return pending;
+	};
+
+	if ( newEntity.state == "fleeing" ) {
+	    // move far from the entity at random
+            if ( newEntity.huntCooldown < 0 ) {
+		var destination = findPointNear( newEntity.x, newEntity.y, 400 );
+		newEntity.destX = destination.x;
+		newEntity.destY = destination.y;
+                newEntity.originX = newEntity.x;
+                newEntity.originY = newEntity.y;
+                newEntity.fleeCooldown = 300; // change flee dest every 300ms
+		newEntity.distanceTravelled = 0; // need to reset for getNextThing
+            }
+	}
+
         if ( newEntity.state == "attacking" ) {
             // shoot 'nearby' the entity at random
             if ( newEntity.shootCooldown < 0 ) {
@@ -253,31 +277,21 @@ function updateMain( ) {
 
 	    // move to 'nearby' the entity at random
             if ( newEntity.huntCooldown < 0 ) {
-		// let's make sure the destination isn't invalid
-		var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
-		while ( checkOutsideBoundary( pending ) ) {
-                    newEntity.destX = newEntity.victim.x + (Math.random() * 300) - 150;
-                    newEntity.destY = newEntity.victim.y + (Math.random() * 300) - 150;
-		    pending.nextX = newEntity.destX;
-		    pending.nextY = newEntity.destY;
-		}
+		destination = findPointNear( newEntity.victim.x, newEntity.victim.y, 150 );
+		newEntity.destX = destination.x;
+		newEntity.destY = destination.y;
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.huntCooldown = 100; // change dest every 100ms
 		newEntity.distanceTravelled = 0; // need to reset for getNextThing
             }
         }
+
         if ( newEntity.state == "seeking") {
             if ( newEntity.destCooldown < 0 ) {
-		// let's make sure the destination isn't invalid
-		var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
-		while ( checkOutsideBoundary( pending ) ) {
-                    newEntity.destX = newEntity.x + (Math.random() * 400) - 200;
-                    newEntity.destY = newEntity.y + (Math.random() * 400) - 200;
-		    pending.nextX = newEntity.destX;
-		    pending.nextY = newEntity.destY;
-		}
-
+		destination = findPointNear( newEntity.victim.x, newEntity.victim.y, 150 );
+		newEntity.destX = destination.x;
+		newEntity.destY = destination.y;
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.destCooldown = 500; // change hunt dest every 500ms
