@@ -667,6 +667,16 @@ function init() {
 
 }
 
+// Event handled for Mute / Unmute button.  Toggle between playing and pausing the audio
+function toggleAudioOnOff () {
+    var audio = document.getElementById("backgroundAudio");
+    if ( audio.muted ) {
+        audio.muted = false;
+    } else {
+        audio.muted = true;
+    }
+}
+
 // animation loop across multiple browsers
 window.requestAnimFrame = (function (callback) {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||

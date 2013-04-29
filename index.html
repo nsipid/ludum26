@@ -7,10 +7,15 @@
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     </head>
     <body>
-        <audio autoplay="autoplay" loop="loop">
+        <audio id="backgroundAudio" autoplay="autoplay" loop="loop">
             <source src="audio/happy_0.mp3" type='audio/mp3'>
             Your user agent does not support the HTML5 Audio element
         </audio>
         <script src="js/chunk.js"></script>
+        <div>
+            <button type="button" onclick="toggleAudioOnOff()">
+                Mute / Unmute
+            </button>
+        </div>
     </body>
 </html>
