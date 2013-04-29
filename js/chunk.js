@@ -3,13 +3,38 @@
 var canvas = document.createElement('canvas');
 canvas.width = 800;
 canvas.height = 600;
-canvas.style.backgroundImage = 'url("https://github.com/nsipid/ludum26/blob/master/images/background.png?raw=true")';
+canvas.style.backgroundImage = 'url("images/background.png")';
 document.body.appendChild( canvas );
 var ctx = canvas.getContext("2d");
 
+// play again button
+var playAgainButton = { x: 320, y: 350, width: 130, height: 50, draw: function(){
+    ctx.fillStyle = "#bb8822";
+    ctx.fillRect( this.x, this.y, this.width, this.height );
+    ctx.fillStyle = "#cc9933";
+    ctx.fillRect( this.x + 5, this.y + 5, this.width - 10, this.height - 10 );
+
+    ctx.font = "20px Verdana";
+    ctx.fillStyle = "#000000";
+    ctx.fillText('Play Again?', this.x + 10, this.y + 30);
+} };
+
+// mute button
+var muteButton = { x: 20, y: 550, width: 130, height: 50, draw: function(){
+    ctx.fillStyle = "#888888";
+    ctx.fillRect( this.x, this.y, this.width, this.height );
+    ctx.fillStyle = "#aaaaaa";
+    ctx.fillRect( this.x + 5, this.y + 5, this.width - 10, this.height - 10 );
+
+    ctx.font = "20px Verdana";
+    ctx.fillStyle = "#000000";
+    ctx.fillText('Mute/Unmute', this.x + 10, this.y + 30);
+} };
+
+
 // put the script in the DOM
 var reactiveScript = document.createElement('script');
-reactiveScript.src = "https://github.com/mattbaker/Reactive.js/raw/master/src/reactive.js";
+reactiveScript.src = "js/reactive.js";
 document.body.appendChild( reactiveScript );
 
 function clearCanvas() {
@@ -17,11 +42,11 @@ function clearCanvas() {
 }
 
 var junkLevel0 = document.createElement('img');
-junkLevel0.src = "https://github.com/nsipid/ludum26/raw/master/images/low-junk.png";
+junkLevel0.src = "images/low-junk.png";
 var junkLevel1 = document.createElement('img');
-junkLevel1.src = "https://github.com/nsipid/ludum26/raw/master/images/middle-junk.png";
+junkLevel1.src = "images/middle-junk.png";
 var junkLevel2 = document.createElement('img');
-junkLevel2.src = "https://github.com/nsipid/ludum26/raw/master/images/high-junk.png";
+junkLevel2.src = "images/high-junk.png";
 
 var junkSprite = {
     x: 600,
@@ -36,7 +61,7 @@ var obstacles = [
 	width: 187,
 	height: 174,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-boxes.png"
+	imageSrc: "images/obstacle-boxes.png"
     },
     {
 	x: 20,
@@ -44,7 +69,7 @@ var obstacles = [
 	width: 125,
 	height: 196,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-couch.png"
+	imageSrc: "images/obstacle-couch.png"
     },
     {
 	x: 700,
@@ -52,7 +77,7 @@ var obstacles = [
 	width: 87,
 	height: 92,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-crate.png"
+	imageSrc: "images/obstacle-crate.png"
     },
     {
 	x: 590,
@@ -60,7 +85,7 @@ var obstacles = [
 	width: 72,
 	height: 93,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-paint-cans.png"
+	imageSrc: "images/obstacle-paint-cans.png"
     }
 ];
 
@@ -75,13 +100,14 @@ var entities = [
         height: 101,
         img: document.createElement('img'),
         flippedImg: document.createElement('img'),
-        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/snazzy_sprite_sheet_flipped.png?raw=true',
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy_sprite_sheet.png?raw=true',
+        flippedImgSrc: 'images/snazzy_sprite_sheet_flipped.png',
+        imageSrc : 'images/snazzy_sprite_sheet.png',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 1,
         spriteState: 0,
         lastSpriteTime: 0,
+	state: "seeking"
     },
     {
         x: 130,
@@ -93,8 +119,8 @@ var entities = [
         height: 101,
         img: document.createElement('img'),
         flippedImg: document.createElement('img'),
-        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/monk_sprite_sheet_flipped.png?raw=true',
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk_sprite_sheet.png?raw=true',
+        flippedImgSrc: 'images/monk_sprite_sheet_flipped.png',
+        imageSrc : 'images/monk_sprite_sheet.png',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 2,
@@ -110,6 +136,7 @@ var entities = [
 	fleeCooldown: 0,
         spriteState: 0,
         lastSpriteTime: 0,
+	state: "seeking"
     },
     {
         x: 500,
@@ -121,8 +148,8 @@ var entities = [
         height: 101,
         img: document.createElement('img'),
         flippedImg: document.createElement('img'),
-        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/ardiente_sprite_sheet_flipped.png?raw=true',
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente_sprite_sheet.png?raw=true',
+        flippedImgSrc: 'images/ardiente_sprite_sheet_flipped.png',
+        imageSrc : 'images/ardiente_sprite_sheet.png',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 3,
@@ -138,6 +165,7 @@ var entities = [
 	fleeCooldown: 0,
         spriteState: 0,
         lastSpriteTime: 0,
+	state: "seeking"
     },
     {
         x: 60,
@@ -149,8 +177,8 @@ var entities = [
         height: 101,
         img: document.createElement('img'),
         flippedImg: document.createElement('img'),
-        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/dbag_sprite_sheet_flipped.png?raw=true',
-        imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/dbag_sprite_sheet.png?raw=true',
+        flippedImgSrc: 'images/dbag_sprite_sheet_flipped.png',
+        imageSrc : 'images/dbag_sprite_sheet.png',
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
@@ -166,6 +194,7 @@ var entities = [
 	fleeCooldown: 0,
         spriteState: 0,
         lastSpriteTime: 0,
+	state: "seeking"
     }
 ];
 
@@ -258,17 +287,24 @@ function updateMain( ) {
     if ( stateChangeTimer < 0 ) {
         for ( var i = 0; i < entities.length; i++ ) {
 	    if ( entities[i] === player ) continue; // everyone but the player
-            for ( var j = 0; j < entities.length; j++ ) {
-		// ouch I got hit, run away!
-		if ( entities[i].gotHit ) {
-		    entities[i].state = "fleeing";
-		    entities[i].gotHit = false; // okay let's get back into it (at next state change)
-		    break;
-		}
 
+	    // ouch I got hit, run away!
+	    if ( entities[i].gotHit ) {
+		entities[i].state = "fleeing";
+		entities[i].gotHit = false;
+		// okay let's get back into it (at next state change)
+		break;
+	    }
+
+	    // otherwise attack if you see anyone
+            for ( var j = 0; j < entities.length; j++ ) {
 		// for the opponents
                 if ( entities[i] === entities[j] ) continue; // I'm not my own opponent!
 
+		// initially, I have no victim
+		entities[i].victim = null;
+
+		// try to find a victim
                 if ( canSee( entities[i], entities[j] ) ) {
                     entities[i].state = "attacking";
                     entities[i].victim = entities[j];
@@ -276,10 +312,11 @@ function updateMain( ) {
                     // NOTE: this means the AI will gang up on player,
                     // or if player is not around, will gang up on entities[1]
                     // or if entities[1] is not around, will gang up on entities[2], etc...
-                } else {
-                    entities[i].state = "seeking";
                 }
-            }
+	    }
+
+	    // if no one around, seek
+            if (entities[i].victim === null) entities[i].state = "seeking";
         }
         stateChangeTimer = 100; // every 100ms
     }
@@ -291,10 +328,14 @@ function updateMain( ) {
 
 	updateXY(newEntity);
 
-	var findPointNear = function ( x, y, dist ) {
+	var findPointNear = function ( entity, x, y, dist ) {
 	    // let's make sure the destination isn't invalid
-	    var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
-	    while ( checkOutsideBoundary( pending ) ) {
+	    var pending = { nextX: x + (Math.random() * dist * 2) - dist,
+			    nextY: y + (Math.random() * dist * 2) - dist,
+			    width: newEntity.width,
+			    height: newEntity.height };
+	    while ( !canSee( entity, {x:pending.nextX, y:pending.nextY, width:40, height:40} ) ||
+		    outsideBoundary( pending ) ) {
                 pending.nextX = x + (Math.random() * dist * 2) - dist;
                 pending.nextY = y + (Math.random() * dist * 2) - dist;
 	    }
@@ -302,12 +343,16 @@ function updateMain( ) {
 	    return pending;
 	};
 
-	var findPointFar = function ( x, y, min ) {
+	var findPointFar = function ( entity, x, y, min ) {
 	    var dist = min * 2;
 	    // let's make sure the destination isn't invalid
-	    var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
-	    while ( checkOutsideBoundary( pending ) &&
-		  distance({x:x, y:y}, {x:pending.nextX, y:pending.nextY}) < min ) {
+	    var pending = { nextX: x + (Math.random() * dist * 2) - dist,
+			    nextY: y + (Math.random() * dist * 2) - dist,
+			    width: newEntity.width,
+			    height: newEntity.height };
+	    while ( !canSee( entity, {x:pending.nextX, y:pending.nextY, width:40, height:40} ) ||
+		    outsideBoundary( pending ) &&
+		    distance({x:x, y:y}, {x:pending.nextX, y:pending.nextY}) < min ) {
                 pending.nextX = x + (Math.random() * dist * 2) - dist;
                 pending.nextY = y + (Math.random() * dist * 2) - dist;
 	    }
@@ -317,14 +362,15 @@ function updateMain( ) {
 
 	if ( newEntity.state == "fleeing" ) {
 	    // move far from the entity at random
-            if ( newEntity.huntCooldown < 0 ) {
-		var destination = findPointFar( newEntity.x, newEntity.y, 200 );
+            if ( newEntity.fleeCooldown < 0 ) {
+		var destination = findPointFar( newEntity, newEntity.x, newEntity.y, 400 );
 		newEntity.destX = destination.nextX;
 		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
                 newEntity.fleeCooldown = 300; // change flee dest every 300ms
 		newEntity.distanceTravelled = 0; // need to reset for getNextThing
+		
             }
 	}
 
@@ -339,7 +385,7 @@ function updateMain( ) {
 
 	    // move to 'nearby' the entity at random
             if ( newEntity.huntCooldown < 0 ) {
-		destination = findPointNear( newEntity.victim.x, newEntity.victim.y, 150 );
+		destination = findPointNear( newEntity, newEntity.victim.x, newEntity.victim.y, 150 );
 		newEntity.destX = destination.nextX;
 		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
@@ -351,7 +397,7 @@ function updateMain( ) {
 
         if ( newEntity.state == "seeking") {
             if ( newEntity.destCooldown < 0 ) {
-		destination = findPointNear( newEntity.x, newEntity.y, 150 );
+		destination = findPointNear( newEntity, newEntity.x, newEntity.y, 350 );
 		newEntity.destX = destination.nextX;
 		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
@@ -412,7 +458,7 @@ function updateMain( ) {
         }
 
         // if bullet leaves stage
-        if (checkOutsideBoundary(newBullet, ctx)) {
+        if (outsideBoundary(newBullet, ctx)) {
             //console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
             newBullet.shooter.throwableJunk++;
             delete bullets[b];
@@ -425,6 +471,7 @@ function updateMain( ) {
     }
 
     // draw debug info
+/*
     for (e in entities) {
 	ctx.font = "20px Verdana";
 	ctx.fillStyle = "#ff0000";
@@ -438,6 +485,10 @@ function updateMain( ) {
 				  entities[e].x + 50,
 				  entities[e].y + 30);
     }
+*/
+
+    // draw mute button
+    muteButton.draw();
 
     // possibly update junk pile
     if ( player.actualJunk < 5 ) junkSprite.img = junkLevel0;
@@ -459,15 +510,19 @@ function updateMain( ) {
 
     stateChangeTimer--; // for the next possible AI statechange
 
-    // request new frame
-    requestAnimFrame(function () {
-        updateMain();
-    });
+    if ( player.actualJunk !== 0 ) {
+	// request new frame
+	requestAnimFrame(function () {
+            updateMain();
+	});
+    } else {
+	updateFin();
+    }
 }
 
 function updateXY(thing) {
     if (!checkCollision(thing, obstacles) &&
-	!checkOutsideBoundary(thing, ctx)) {
+	!outsideBoundary(thing, ctx)) {
 
         if (thing.spriteState !== undefined && (thing.x != thing.nextX || thing.y != thing.nextY)) {
             if (thing.x < thing.nextX) {
@@ -509,6 +564,7 @@ function checkCollision(testObject, collisionObjects, onCollision) {
                 if (onCollision !== undefined) {
                     onCollision(collisionObjects[i]);
                 }
+		return true; // why continue?
             }
         }
     }
@@ -516,7 +572,7 @@ function checkCollision(testObject, collisionObjects, onCollision) {
     return collides;
 }
 
-function checkOutsideBoundary(testObject) {
+function outsideBoundary(testObject) {
     if (testObject.nextX < 0
         || testObject.nextY < 0
         || testObject.nextX + testObject.width > canvas.width
@@ -571,9 +627,27 @@ function shoot(entity, x, y) {
     bullets.push(b);
 }
 
+// can entity1 see entity2? let's find out
 function canSee( entity1, entity2 ) {
     var ret = false;
-    if ( distance(entity1, entity2) < 200 ) ret = true;
+    var originX = entity1.x + entity1.width/2;
+    var originY = entity1.y + entity1.height/2;
+    var destX = entity2.x + entity2.width/2;
+    var destY = entity2.y + entity2.height/2;
+    var sight = { x: originX , y: originY, nextX: originX, nextY: originY, width: 20, height: 20, originX: originX, originY: originY, destX: destX, destY: destY, distanceTravelled: 0, speed: 1, shooter: entity1 };
+
+    ctx.fillStyle="#ff0000";
+    ctx.fillRect(sight.x,sight.y,sight.width,sight.height);
+
+    while ( !checkCollision(sight, obstacles) && /* not hitting obstacles */
+	    !outsideBoundary(sight, ctx) /* not offscreen */) {
+	sight = nextThingAlongLine(sight); // get next glance
+	ctx.fillRect(sight.x,sight.y,sight.width,sight.height);
+    }
+
+    if ( checkCollision(sight, obstacles) ) ret = false;
+    else ret = true;
+
     return ret;
 }
 
@@ -582,7 +656,6 @@ function updateSplashScreen ( splashSize ) {
 
         clearCanvas();
 
-        // draw mouse coords
         var speed = 0.5;
         var ds = speed + dt() / 1000;
         var size = splashSize + ds;
@@ -601,6 +674,34 @@ function updateSplashScreen ( splashSize ) {
         });
     }
 }
+
+function updateFin ( ) {
+    clearCanvas();
+
+    ctx.font = "50px Verdana";
+    ctx.fillStyle = "#aaffaa";
+    ctx.fillText('You Win!', 276, 290);
+
+    playAgainButton.draw();
+    muteButton.draw();
+
+    addEventListener("mousedown", playAgainMaybe, false);
+}
+
+function playAgainMaybe(e) {
+    if (e.offsetX > playAgainButton.x && e.offsetX < playAgainButton.x + playAgainButton.width &&
+	e.offsetY > playAgainButton.y && e.offsetY < playAgainButton.y + playAgainButton.height) {
+	removeEventListener("mousedown", playAgainMaybe, false);
+	
+	// reset game
+	for (e in entities) {
+	    entities[e].actualJunk = 10;
+	    entities[e].throwableJunk = 10;
+	}
+	updateMain();
+    }
+}
+
 
 // kinda dumb, but some of this can't be run before DOM is complete
 function init() {
@@ -630,16 +731,16 @@ function init() {
 
     bulletType = [];
     img1 = document.createElement('img');
-    img1.src = "https://github.com/nsipid/ludum26/raw/master/images/object-blender-small.png";
+    img1.src = "images/object-blender-small.png";
     bulletType.push(img1);
     img2 = document.createElement('img');
-    img2.src = "https://github.com/nsipid/ludum26/raw/master/images/object-cardboardbox-small.png";
+    img2.src = "images/object-cardboardbox-small.png";
     bulletType.push(img2);
     img3 = document.createElement('img');
-    img3.src = "https://github.com/nsipid/ludum26/raw/master/images/object-toaster-small.png";
+    img3.src = "images/object-toaster-small.png";
     bulletType.push(img3);
     img4 = document.createElement('img');
-    img4.src = "https://github.com/nsipid/ludum26/raw/master/images/object-onepaintcan-small.png";
+    img4.src = "images/object-onepaintcan-small.png";
     bulletType.push(img4);
 
 
@@ -655,6 +756,14 @@ function init() {
     }, false);
 
     addEventListener("mousedown", skipSplash, false);
+
+    addEventListener("mousedown", toggleAudioMaybe, false);
+
+    function toggleAudioMaybe(e) {
+	if (e.offsetX > muteButton.x && e.offsetX < muteButton.x + muteButton.width &&
+	    e.offsetY > muteButton.y && e.offsetY < muteButton.y + muteButton.height)
+	    toggleAudioOnOff();
+    }
 
     function mouseClick(e) {
 	shoot(player, e.offsetX, e.offsetY);
