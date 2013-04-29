@@ -398,15 +398,16 @@ function updateXY(thing) {
 	!checkCollision(thing, obstacles) &&
 	!checkOutsideBoundary(thing, ctx)) {
 
-        if (thing.spriteState !== undefined) {
-            if (thing.x < thing.nextX)
+        if (thing.spriteState !== undefined && (thing.x != thing.nextX || thing.y != thing.nextY)) {
+            if (thing.x < thing.nextX) {
                 thing.flipped = false;
-            else if (thing.x > thing.nextX)
+            }
+            else if (thing.x > thing.nextX) {
                 thing.flipped = true;
+            }
 
             updateSpriteState(thing);
-        }
-
+        }       
         thing.x = thing.nextX;
         thing.y = thing.nextY;
     }
