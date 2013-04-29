@@ -49,7 +49,9 @@ var entities = [
         speed: 0.1,
         width: 74,
         height: 101,
-	img: document.createElement('img'),
+        img: document.createElement('img'),
+        flippedImg: document.createElement('img'),
+        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/snazzy_sprite_sheet_flipped.png?raw=true',
         imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/snazzy_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
@@ -65,7 +67,9 @@ var entities = [
         speed: 0.1,
         width: 74,
         height: 101,
-	img: document.createElement('img'),
+        img: document.createElement('img'),
+        flippedImg: document.createElement('img'),
+        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/monk_sprite_sheet_flipped.png?raw=true',
         imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/monk_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
@@ -90,7 +94,9 @@ var entities = [
         speed: 0.1,
         width: 74,
         height: 101,
-	img: document.createElement('img'),
+        img: document.createElement('img'),
+        flippedImg: document.createElement('img'),
+        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/ardiente_sprite_sheet_flipped.png?raw=true',
         imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/ardiente_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
@@ -115,7 +121,9 @@ var entities = [
         speed: 0.1,
         width: 74,
         height: 101,
-	img: document.createElement('img'),
+        img: document.createElement('img'),
+        flippedImg: document.createElement('img'),
+        flippedImgSrc: 'https://github.com/nsipid/ludum26/blob/master/images/dbag_sprite_sheet_flipped.png?raw=true',
         imageSrc : 'https://github.com/nsipid/ludum26/blob/master/images/dbag_sprite_sheet.png?raw=true',
         actualJunk: 10,
         throwableJunk: 10,
@@ -154,20 +162,15 @@ var Bullet = function () {
 var bullets = [];
 
 function drawCharacter( thing ) {
-    ctx.fillStyle = '#444444';
+    ctx.fillStyle = '#444444'; 
 
-    var scaleH = thing.flipped ? -1 : 1;
-    posX = thing.flipped ? thing.width * -1 : 0;
-
-    ctx.save();
-    ctx.scale(scaleH, 1);  
+    var image = thing.flipped ? thing.flippedImg : thing.img;
 
     if (thing.spriteState === 0) {
-        ctx.drawImage(thing.img, 0, 0, thing.width, thing.height, posX + thing.x, thing.y, thing.width, thing.height);
+        ctx.drawImage(image, 0, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
     } else {
-        ctx.drawImage(thing.img, thing.width, 0, thing.width, thing.height, posX - thing.x, thing.y, thing.width, thing.height);
+        ctx.drawImage(image, thing.width, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
     }
-    ctx.restore();
 }
 
 function drawObstacle( obstacle ) {
@@ -545,7 +548,8 @@ function init() {
 
     // this is dumb, but...
     for ( e in entities ) {
-	entities[e].img.src = entities[e].imageSrc;
+        entities[e].img.src = entities[e].imageSrc;
+        entities[e].flippedImg.src = entities[e].flippedImageSrc;
     }
 
     // Keyboard 'buffer'
