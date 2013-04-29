@@ -20,20 +20,20 @@ var obstacles = [
     {
 	x: 300,
 	y: 40,
-	width: 200,
-	height: 20,
+	width: 400,
+	height: 40,
 	color: "#558866"
     },
     {
-	x: 40,
+	x: 180,
 	y: 170,
-	width: 30,
-	height: 200,
+	width: 60,
+	height: 400,
 	color: "#558866"
     },
     {
-	x: 240,
-	y: 170,
+	x: 540,
+	y: 270,
 	width: 70,
 	height: 90,
 	color: "#558866"
@@ -142,8 +142,8 @@ var Bullet = function () {
         originY: 0,
         destX: 0,
         destY: 0,
-        width: 5,
-        height: 5,
+        width: 25,
+        height: 25,
         nextX: 0,
         nextY: 0,
         speed: 0.3,
@@ -163,11 +163,14 @@ function drawCharacter( thing ) {
 }
 
 function drawObstacle( obstacle ) {
-    drawBullet( obstacle ); // lol
+    // should be boxes, crates, fridges, couches
+    ctx.fillStyle = '#444444';
+    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 }
 
 function drawBullet( thing ) {
-    ctx.fillStyle = '#444444';
+    // should be junk at random (especially potato)
+    ctx.fillStyle = '#779922';
     ctx.fillRect(thing.x, thing.y, thing.width, thing.height);
 }
 
@@ -253,8 +256,8 @@ function updateMain( ) {
 		// let's make sure the destination isn't invalid
 		var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
 		while ( checkOutsideBoundary( pending ) ) {
-                    newEntity.destX = newEntity.victim.x + (Math.random() * 200) - 100;
-                    newEntity.destY = newEntity.victim.y + (Math.random() * 200) - 100;
+                    newEntity.destX = newEntity.victim.x + (Math.random() * 300) - 150;
+                    newEntity.destY = newEntity.victim.y + (Math.random() * 300) - 150;
 		    pending.nextX = newEntity.destX;
 		    pending.nextY = newEntity.destY;
 		}
@@ -269,15 +272,15 @@ function updateMain( ) {
 		// let's make sure the destination isn't invalid
 		var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
 		while ( checkOutsideBoundary( pending ) ) {
-                    newEntity.destX = newEntity.x + (Math.random() * 200) - 100;
-                    newEntity.destY = newEntity.y + (Math.random() * 200) - 100;
+                    newEntity.destX = newEntity.x + (Math.random() * 400) - 200;
+                    newEntity.destY = newEntity.y + (Math.random() * 400) - 200;
 		    pending.nextX = newEntity.destX;
 		    pending.nextY = newEntity.destY;
 		}
 
                 newEntity.originX = newEntity.x;
                 newEntity.originY = newEntity.y;
-                newEntity.destCooldown = 200; // change hunt dest every 200 milliseconds
+                newEntity.destCooldown = 500; // change hunt dest every 500ms
 		newEntity.distanceTravelled = 0; // need to reset for getNextThing
             }
         }
@@ -298,7 +301,7 @@ function updateMain( ) {
 
 	updateXY(newBullet);
 
-        var onCollision = function (entity) {
+        var onCollisionEntity = function (entity) {
             //if we collided into a player
             if (entity.actualJunk !== undefined) {
                 entity.actualJunk++;
@@ -315,8 +318,14 @@ function updateMain( ) {
             }
         };
 
+        var onCollisionObstacle = function (obstacle) {
+            //if we collided into an obstacle, just give it back
+            newBullet.shooter.throwableJunk++;
+        };
+
         // if bullet hits something
-        if (checkCollision(newBullet, entities, onCollision)) {
+        if (checkCollision(newBullet, obstacles, onCollisionObstacle) ||
+	    checkCollision(newBullet, entities, onCollisionEntity)) {
             delete bullets[b];
             continue;
         }
@@ -440,8 +449,8 @@ function shoot(entity, x, y) {
     var b = new Bullet;
     b.x = entity.x;
     b.y = entity.y;
-    b.originX = entity.x;
-    b.originY = entity.y;
+    b.originX = entity.x + entity.width/2;
+    b.originY = entity.y + entity.height/2;
     b.destX = x;
     b.destY = y;
     b.shooter = entity;
