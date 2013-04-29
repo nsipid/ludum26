@@ -20,32 +20,32 @@ var obstacles = [
     {
 	x: 300,
 	y: 40,
-	width: 400,
-	height: 40,
+	width: 187,
+	height: 174,
 	img: document.createElement('img'),
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-boxes.png"
     },
     {
 	x: 180,
 	y: 170,
-	width: 60,
-	height: 400,
+	width: 125,
+	height: 196,
 	img: document.createElement('img'),
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-couch.png"
     },
     {
 	x: 540,
 	y: 270,
-	width: 70,
-	height: 90,
+	width: 87,
+	height: 92,
 	img: document.createElement('img'),
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-crate.png"
     },
     {
 	x: 240,
-	y: 220,
-	width: 70,
-	height: 90,
+	y: 420,
+	width: 72,
+	height: 93,
 	img: document.createElement('img'),
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-paint-cans.png"
     }
@@ -587,6 +587,9 @@ function init() {
     for ( e in entities ) {
         entities[e].img.src = entities[e].imageSrc;
         entities[e].flippedImg.src = entities[e].flippedImgSrc;
+    }
+    for ( e in obstacles ) {
+        obstacles[e].img.src = obstacles[e].imageSrc;
     }
 
     bulletType = [];
