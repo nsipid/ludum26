@@ -155,11 +155,19 @@ var bullets = [];
 
 function drawCharacter( thing ) {
     ctx.fillStyle = '#444444';
+
+    var scaleH = thing.flipped ? -1 : 1;
+    posX = thing.flipped ? thing.width * -1 : 0;
+
+    ctx.save();
+    ctx.scale(scaleH, 1);  
+
     if (thing.spriteState === 0) {
-        ctx.drawImage(thing.img, 0, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
+        ctx.drawImage(thing.img, 0, 0, thing.width, thing.height, posX + thing.x, thing.y, thing.width, thing.height);
     } else {
-        ctx.drawImage(thing.img, thing.width, 0, thing.width, thing.height, thing.x, thing.y, thing.width, thing.height);
+        ctx.drawImage(thing.img, thing.width, 0, thing.width, thing.height, posX - thing.x, thing.y, thing.width, thing.height);
     }
+    ctx.restore();
 }
 
 function drawObstacle( obstacle ) {
@@ -365,10 +373,10 @@ function updateXY(thing) {
 	!checkOutsideBoundary(thing, ctx)) {
 
         if (thing.spriteState !== undefined) {
-            if (thing.x < thing.next)
-                unflipImage(thing.img);
-            else if (thing.x > thing.next)
-                flipImage(thing.img);
+            if (thing.x < thing.nextX)
+                thing.flipped = true;
+            else if (thing.x > thing.nextX)
+                thing.flipped = false;
 
             updateSpriteState(thing);
         }
@@ -376,14 +384,6 @@ function updateXY(thing) {
         thing.x = thing.nextX;
         thing.y = thing.nextY;
     }
-}
-
-function flipImage(img) {
-    img.style.cssText = '-moz-transform: scaleX(-1);-o-transform: scaleX(-1);-webkit-transform: scaleX(-1);transform: scaleX(-1);filter: FlipH;-ms-filter: "FlipH";';
-}
-
-function unflipImage() {
-    img.style.cssText = '';
 }
 
 function distance(point1, point2) {
