@@ -23,7 +23,7 @@ var obstacles = [
 	width: 400,
 	height: 40,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-boxes-small.png"
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-boxes.png"
     },
     {
 	x: 180,
@@ -31,7 +31,7 @@ var obstacles = [
 	width: 60,
 	height: 400,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-couch-small.png"
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-couch.png"
     },
     {
 	x: 540,
@@ -39,7 +39,7 @@ var obstacles = [
 	width: 70,
 	height: 90,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-crate-small.png"
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-crate.png"
     },
     {
 	x: 240,
@@ -47,7 +47,7 @@ var obstacles = [
 	width: 70,
 	height: 90,
 	img: document.createElement('img'),
-	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-paint-cans-small.png"
+	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-paint-cans.png"
     }
 ];
 
@@ -591,16 +591,16 @@ function init() {
 
     bulletType = [];
     img1 = document.createElement('img');
-    img1.src = "https://github.com/nsipid/ludum26/raw/master/images/object-blender.png";
+    img1.src = "https://github.com/nsipid/ludum26/raw/master/images/object-blender-small.png";
     bulletType.push(img1);
     img2 = document.createElement('img');
-    img2.src = "https://github.com/nsipid/ludum26/raw/master/images/object-cardboardbox.png";
+    img2.src = "https://github.com/nsipid/ludum26/raw/master/images/object-cardboardbox-small.png";
     bulletType.push(img2);
     img3 = document.createElement('img');
-    img3.src = "https://github.com/nsipid/ludum26/raw/master/images/object-toaster.png";
+    img3.src = "https://github.com/nsipid/ludum26/raw/master/images/object-toaster-small.png";
     bulletType.push(img3);
     img4 = document.createElement('img');
-    img4.src = "https://github.com/nsipid/ludum26/raw/master/images/object-onepaintcan.png";
+    img4.src = "https://github.com/nsipid/ludum26/raw/master/images/object-onepaintcan-small.png";
     bulletType.push(img4);
 
 
