@@ -381,22 +381,22 @@ function updateMain( ) {
 
 	updateXY(newBullet);
 
+        //only allow bullet to collide with a single player
+	var collided = false;
+
         var onCollisionEntity = function (entity) {
             //if we collided into a player
-            if (entity.actualJunk !== undefined) {
+            if (entity.actualJunk !== undefined && collided === false) {
+                collided = true;
                 entity.actualJunk++;
                 entity.throwableJunk++;
-		entity.gotHit = true;
+		        entity.gotHit = true;
                 console.log("Player " + entity.playerId + " gains actual junk\n");
                 if (newBullet.shooter.actualJunk > 0) {
                     newBullet.shooter.actualJunk--;
                     //console.log("Player " + newBullet.shooter.playerId + " loses actual junk\n");
                 }
-            } else {
-                //obstacle
-                newBullet.shooter.throwableJunk++;
-                //console.log("Player " + newBullet.shooter.playerId + " gains throwable junk\n");
-            }
+            } 
         };
 
         var onCollisionObstacle = function (obstacle) {
