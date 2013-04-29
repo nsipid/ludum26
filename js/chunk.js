@@ -16,6 +16,19 @@ function clearCanvas() {
     ctx.canvas.width = ctx.canvas.width;
 }
 
+var junkLevel0 = document.createElement('img');
+junkLevel0.src = "https://github.com/nsipid/ludum26/raw/master/images/low-junk.png";
+var junkLevel1 = document.createElement('img');
+junkLevel1.src = "https://github.com/nsipid/ludum26/raw/master/images/middle-junk.png";
+var junkLevel2 = document.createElement('img');
+junkLevel2.src = "https://github.com/nsipid/ludum26/raw/master/images/high-junk.png";
+
+var junkSprite = {
+    x: 600,
+    y: 400,
+    img: junkLevel1
+};
+
 var obstacles = [
     {
 	x: 300,
@@ -417,7 +430,23 @@ function updateMain( ) {
 				  entities[e].x + 50,
 				  entities[e].y + 30);
     }
-    
+
+    // possibly update junk pile
+    if ( entities[0].actualJunk < 5 ) junkSprite.img = junkLevel0;
+    if ( entities[0].actualJunk >= 5 ) junkSprite.img = junkLevel1;
+    if ( entities[0].actualJunk >= 15 ) junkSprite.img = junkLevel2
+;
+    // draw junk pile
+    drawThing(junkSprite);
+
+    // draw level
+    for ( var i = 0; i < entities[0].actualJunk; i++ ) {
+	ctx.fillStyle = "#33bb33";
+	ctx.fillRect(740,450 + i * 11,30,10);
+	ctx.fillStyle = "#55dd55";
+	ctx.fillRect(742,452 + i * 11,25,4);
+    }
+
     then(Date.now()); // then is now now
 
     stateChangeTimer--; // for the next possible AI statechange
