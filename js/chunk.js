@@ -39,24 +39,24 @@ var obstacles = [
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-boxes.png"
     },
     {
-	x: 180,
-	y: 170,
+	x: 20,
+	y: 60,
 	width: 125,
 	height: 196,
 	img: document.createElement('img'),
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-couch.png"
     },
     {
-	x: 540,
-	y: 270,
+	x: 700,
+	y: 60,
 	width: 87,
 	height: 92,
 	img: document.createElement('img'),
 	imageSrc: "https://github.com/nsipid/ludum26/raw/master/images/obstacle-crate.png"
     },
     {
-	x: 240,
-	y: 420,
+	x: 590,
+	y: 400,
 	width: 72,
 	height: 93,
 	img: document.createElement('img'),
@@ -66,7 +66,7 @@ var obstacles = [
 
 var entities = [
     {
-        x: 700,
+        x: 600,
         y: 60,
         nextX: 700,
         nextY: 60,
@@ -84,8 +84,8 @@ var entities = [
         lastSpriteTime: 0,
     },
     {
-        x: 60,
-        y: 60,
+        x: 130,
+        y: 230,
         nextX: 60,
         nextY: 60,
         speed: 0.1,
@@ -112,7 +112,7 @@ var entities = [
         lastSpriteTime: 0,
     },
     {
-        x: 700,
+        x: 500,
         y: 500,
         nextX: 700,
         nextY: 500,
@@ -168,6 +168,8 @@ var entities = [
         lastSpriteTime: 0,
     }
 ];
+
+var player = entities[0];
 
 var Bullet = function () {
     return {
@@ -226,19 +228,19 @@ function updateMain( ) {
 
     // movement (updates player)
     if (keysDown[37] || keysDown[65]) {
-        entities[0].nextX = Math.floor(entities[0].x - entities[0].speed * dt());
+        player.nextX = Math.floor(player.x - player.speed * dt());
         //move left
     }
     if (keysDown[39] || keysDown[68]) {
-        entities[0].nextX = Math.floor(entities[0].x + entities[0].speed * dt());
+        player.nextX = Math.floor(player.x + player.speed * dt());
         // move right
     }
     if (keysDown[38] || keysDown[87]) {
-        entities[0].nextY = Math.floor(entities[0].y - entities[0].speed * dt());
+        player.nextY = Math.floor(player.y - player.speed * dt());
         // move up
     }
     if (keysDown[40] || keysDown[83]) {
-        entities[0].nextY = Math.floor(entities[0].y + entities[0].speed * dt());
+        player.nextY = Math.floor(player.y + player.speed * dt());
         // move down
     }
     if ( keysDown[32]) {
@@ -254,7 +256,8 @@ function updateMain( ) {
     //
     // this state changing code should only happen every half second
     if ( stateChangeTimer < 0 ) {
-        for ( var i = 1; i < entities.length; i++ ) { // everyone but the player
+        for ( var i = 0; i < entities.length; i++ ) {
+	    if ( entities[i] === player ) continue; // everyone but the player
             for ( var j = 0; j < entities.length; j++ ) {
 		// ouch I got hit, run away!
 		if ( entities[i].gotHit ) {
@@ -282,7 +285,8 @@ function updateMain( ) {
     }
 
     // AI Movement and shooting
-    for ( var i = 1; i < entities.length; i ++ ) {
+    for ( var i = 0; i < entities.length; i ++ ) {
+	if ( entities[i] === player ) continue; // everyone but the player
         var newEntity = nextThingAlongLine( entities[i] );
 
 	updateXY(newEntity);
@@ -360,12 +364,16 @@ function updateMain( ) {
 	newEntity.huntCooldown-=dt();
 	newEntity.shootCooldown-=dt();
         entities[i] = newEntity;
-	drawCharacter( entities[i] );
     }
 
     // dont' forget the player
-    updateXY(entities[0]);
-    drawCharacter( entities[0] );
+    updateXY(player);
+
+    // need to draw by z-order
+    entities.sort(function(e1,e2){ return e1.y - e2.y;});
+    for (e in entities) {
+	drawCharacter( entities[e] );
+    }
 
     // update the bullets
     for (b in bullets) {
@@ -432,15 +440,15 @@ function updateMain( ) {
     }
 
     // possibly update junk pile
-    if ( entities[0].actualJunk < 5 ) junkSprite.img = junkLevel0;
-    if ( entities[0].actualJunk >= 5 ) junkSprite.img = junkLevel1;
-    if ( entities[0].actualJunk >= 15 ) junkSprite.img = junkLevel2
+    if ( player.actualJunk < 5 ) junkSprite.img = junkLevel0;
+    if ( player.actualJunk >= 5 ) junkSprite.img = junkLevel1;
+    if ( player.actualJunk >= 15 ) junkSprite.img = junkLevel2
 ;
     // draw junk pile
     drawThing(junkSprite);
 
     // draw level
-    for ( var i = 0; i < entities[0].actualJunk; i++ ) {
+    for ( var i = 0; i < player.actualJunk; i++ ) {
 	ctx.fillStyle = "#33bb33";
 	ctx.fillRect(740,450 + i * 11,30,10);
 	ctx.fillStyle = "#55dd55";
@@ -458,8 +466,7 @@ function updateMain( ) {
 }
 
 function updateXY(thing) {
-    if (!checkCollision(thing, entities) &&
-	!checkCollision(thing, obstacles) &&
+    if (!checkCollision(thing, obstacles) &&
 	!checkOutsideBoundary(thing, ctx)) {
 
         if (thing.spriteState !== undefined && (thing.x != thing.nextX || thing.y != thing.nextY)) {
@@ -650,7 +657,7 @@ function init() {
     addEventListener("mousedown", skipSplash, false);
 
     function mouseClick(e) {
-	shoot(entities[0], e.offsetX, e.offsetY);
+	shoot(player, e.offsetX, e.offsetY);
     }
 
     function skipSplash(e) {
