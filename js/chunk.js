@@ -83,6 +83,7 @@ var entities = [
         destCooldown: 0,
         huntCooldown: 0,
         shootCooldown: 0,
+	fleeCooldown: 0,
         spriteState: 0,
         lastSpriteTime: 0,
     },
@@ -110,6 +111,7 @@ var entities = [
         destCooldown: 0,
         huntCooldown: 0,
         shootCooldown: 0,
+	fleeCooldown: 0,
         spriteState: 0,
         lastSpriteTime: 0,
     },
@@ -137,6 +139,7 @@ var entities = [
         destCooldown: 0,
         huntCooldown: 0,
         shootCooldown: 0,
+	fleeCooldown: 0,
         spriteState: 0,
         lastSpriteTime: 0,
     }
@@ -234,7 +237,15 @@ function updateMain( ) {
     if ( stateChangeTimer < 0 ) {
         for ( var i = 1; i < entities.length; i++ ) { // everyone but the player
             for ( var j = 0; j < entities.length; j++ ) {
-                if ( entities[i] === entities[j] ) continue; // that's a me!
+		// ouch I got hit, run away!
+		if ( entities[i].gotHit ) {
+		    entities[i].state = "fleeing";
+		    entities[i].gotHit = false; // okay let's get back into it (at next state change)
+		    break;
+		}
+
+		// for the opponents
+                if ( entities[i] === entities[j] ) continue; // I'm not my own opponent!
 
                 if ( canSee( entities[i], entities[j] ) ) {
                     entities[i].state = "attacking";
@@ -268,10 +279,23 @@ function updateMain( ) {
 	    return pending;
 	};
 
+	var findPointFar = function ( x, y, min ) {
+	    var dist = min * 2;
+	    // let's make sure the destination isn't invalid
+	    var pending = { nextX: 9999, nextY: 9999, width: newEntity.width, height: newEntity.height };
+	    while ( checkOutsideBoundary( pending ) &&
+		  distance({x:x, y:y}, {x:pending.nextX, y:pending.nextY}) < min ) {
+                pending.nextX = x + (Math.random() * dist * 2) - dist;
+                pending.nextY = y + (Math.random() * dist * 2) - dist;
+	    }
+
+	    return pending;
+	};
+
 	if ( newEntity.state == "fleeing" ) {
 	    // move far from the entity at random
             if ( newEntity.huntCooldown < 0 ) {
-		var destination = findPointNear( newEntity.x, newEntity.y, 400 );
+		var destination = findPointFar( newEntity.x, newEntity.y, 200 );
 		newEntity.destX = destination.nextX;
 		newEntity.destY = destination.nextY;
                 newEntity.originX = newEntity.x;
@@ -335,6 +359,7 @@ function updateMain( ) {
             if (entity.actualJunk !== undefined) {
                 entity.actualJunk++;
                 entity.throwableJunk++;
+		entity.gotHit = true;
                 console.log("Player " + entity.playerId + " gains actual junk\n");
                 if (newBullet.shooter.actualJunk > 0) {
                     newBullet.shooter.actualJunk--;
