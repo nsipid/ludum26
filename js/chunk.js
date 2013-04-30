@@ -241,7 +241,19 @@ function updateSpriteState(sprite) {
     }
 }
 
+var gameState = "";
+
 function updateMain( ) {
+
+    if (gameState === "lost") {
+	updateLost();
+	return;
+    }
+    if (gameState === "won") {
+	updateWon();
+	return;
+    }
+
     now = Date.now();
     dt = now - then;
 
@@ -506,14 +518,18 @@ function updateMain( ) {
 
     stateChangeTimer--; // for the next possible AI statechange
 
-    if ( player.actualJunk !== 0 ) {
-	// request new frame
-	requestAnimFrame(function () {
-            updateMain();
-	});
+    if ( player.actualJunk > 0 && player.actualJunk < 20 ) {
+	gameState = "playing";
+    } else if ( player.actualJunk >= 20 ) {
+	gameState = "lost";
     } else {
-	updateFin();
+	gameState = "won";
     }
+
+    // request new frame
+    requestAnimFrame( function () {
+        updateMain();
+    });
 }
 
 function updateXY(thing) {
@@ -646,6 +662,8 @@ function canSee( entity1, entity2 ) {
 }
 
 function updateSplashScreen ( splashSize ) {
+    if ( gameState == "playing" ) return;
+
     if ( splashSize < 100 ) {
 
         clearCanvas();
@@ -669,7 +687,22 @@ function updateSplashScreen ( splashSize ) {
     }
 }
 
-function updateFin ( ) {
+function updateLost ( ) {
+    removeEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
+    clearCanvas();
+
+    ctx.font = "50px Verdana";
+    ctx.fillStyle = "#aaffaa";
+    ctx.fillText('You Lost!', 276, 290);
+
+    playAgainButton.draw();
+    muteButton.draw();
+
+    addEventListener("mousedown", playAgainMaybe, false);
+}
+
+function updateWon ( ) {
+    removeEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
     clearCanvas();
 
     ctx.font = "50px Verdana";
@@ -724,6 +757,8 @@ function playAgainMaybe(e) {
 	    }
 	}
 
+	addEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
+	gameState = "playing";
 	updateMain();
     }
 }
@@ -790,7 +825,7 @@ function init() {
 	then = Date.now();
 	updateMain();
 	removeEventListener("mousedown", skipSplash, false);
-	addEventListener("mousedown", mouseClick, false);
+	addEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
     }
 }
 
@@ -821,6 +856,7 @@ window.onload = function () {
 
     // run the game here
     // splash screen first
+    gameState = "splashing";
     updateSplashScreen(0);
     //updateMain();
 };
