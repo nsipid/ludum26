@@ -241,7 +241,19 @@ function updateSpriteState(sprite) {
     }
 }
 
+var gameState = "";
+
 function updateMain( ) {
+
+    if (gameState === "lost") {
+	updateLost();
+	return;
+    }
+    if (gameState === "won") {
+	updateWon();
+	return;
+    }
+
     now = Date.now();
     dt = now - then;
 
@@ -506,14 +518,18 @@ function updateMain( ) {
 
     stateChangeTimer--; // for the next possible AI statechange
 
-    if ( player.actualJunk !== 0 ) {
-	// request new frame
-	requestAnimFrame(function () {
-            updateMain();
-	});
+    if ( player.actualJunk > 0 && player.actualJunk < 20 ) {
+	gameState = "playing";
+    } else if ( player.actualJunk >= 20 ) {
+	gameState = "lost";
     } else {
-	updateFin();
+	gameState = "won";
     }
+
+    // request new frame
+    requestAnimFrame( function () {
+        updateMain();
+    });
 }
 
 function updateXY(thing) {
@@ -585,6 +601,7 @@ function nextThingAlongLine(thing) {
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
+    if (dt === 0) dt = 1;
     thing.distanceTravelled = thing.distanceTravelled + (dt * thing.speed);
     thing.nextX = Math.round(thing.originX + nX3 * thing.distanceTravelled);
     thing.nextY = Math.round(thing.originY + nY3 * thing.distanceTravelled);
@@ -646,10 +663,12 @@ function canSee( entity1, entity2 ) {
 }
 
 function updateSplashScreen ( splashSize ) {
+    if ( gameState == "playing" ) return;
+
     if ( splashSize < 100 ) {
 
         clearCanvas();
-
+	if (dt === 0) dt = 1;
         var speed = 0.5;
         var ds = speed + dt / 1000;
         var size = splashSize + ds;
@@ -669,7 +688,20 @@ function updateSplashScreen ( splashSize ) {
     }
 }
 
-function updateFin ( ) {
+function updateLost ( ) {
+    clearCanvas();
+
+    ctx.font = "50px Verdana";
+    ctx.fillStyle = "#aaffaa";
+    ctx.fillText('You Lost!', 276, 290);
+
+    playAgainButton.draw();
+    muteButton.draw();
+
+    addEventListener("mousedown", playAgainMaybe, false);
+}
+
+function updateWon ( ) {
     clearCanvas();
 
     ctx.font = "50px Verdana";
@@ -724,6 +756,7 @@ function playAgainMaybe(e) {
 	    }
 	}
 
+	gameState = "playing";
 	updateMain();
     }
 }
@@ -783,6 +816,7 @@ function init() {
     }
 
     function mouseClick(e) {
+	if (gameState !== "playing") return;
 	shoot(player, e.offsetX, e.offsetY);
     }
 
@@ -821,6 +855,7 @@ window.onload = function () {
 
     // run the game here
     // splash screen first
+    gameState = "splashing";
     updateSplashScreen(0);
     //updateMain();
 };
