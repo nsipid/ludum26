@@ -601,6 +601,7 @@ function nextThingAlongLine(thing) {
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
+    if (dt === 0) dt = 1;
     thing.distanceTravelled = thing.distanceTravelled + (dt * thing.speed);
     thing.nextX = Math.round(thing.originX + nX3 * thing.distanceTravelled);
     thing.nextY = Math.round(thing.originY + nY3 * thing.distanceTravelled);
@@ -667,7 +668,7 @@ function updateSplashScreen ( splashSize ) {
     if ( splashSize < 100 ) {
 
         clearCanvas();
-
+	if (dt === 0) dt = 1;
         var speed = 0.5;
         var ds = speed + dt / 1000;
         var size = splashSize + ds;
@@ -688,7 +689,6 @@ function updateSplashScreen ( splashSize ) {
 }
 
 function updateLost ( ) {
-    removeEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
     clearCanvas();
 
     ctx.font = "50px Verdana";
@@ -702,7 +702,6 @@ function updateLost ( ) {
 }
 
 function updateWon ( ) {
-    removeEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
     clearCanvas();
 
     ctx.font = "50px Verdana";
@@ -757,7 +756,6 @@ function playAgainMaybe(e) {
 	    }
 	}
 
-	addEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
 	gameState = "playing";
 	updateMain();
     }
@@ -818,6 +816,7 @@ function init() {
     }
 
     function mouseClick(e) {
+	if (gameState !== "playing") return;
 	shoot(player, e.offsetX, e.offsetY);
     }
 
@@ -825,7 +824,7 @@ function init() {
 	then = Date.now();
 	updateMain();
 	removeEventListener("mousedown", skipSplash, false);
-	addEventListener("mousedown", function(e){shoot(player, e.offsetX, e.offsetY);}, false);
+	addEventListener("mousedown", mouseClick, false);
     }
 }
 
