@@ -31,12 +31,6 @@ var muteButton = { x: 20, y: 550, width: 130, height: 50, draw: function(){
     ctx.fillText('Mute/Unmute', this.x + 10, this.y + 30);
 } };
 
-
-// put the script in the DOM
-var reactiveScript = document.createElement('script');
-reactiveScript.src = "js/reactive.js";
-document.body.appendChild( reactiveScript );
-
 function clearCanvas() {
     ctx.canvas.width = ctx.canvas.width;
 }
@@ -93,7 +87,7 @@ var entities = [
     {
         x: 600,
         y: 60,
-        nextX: 700,
+        nextX: 601,
         nextY: 60,
         speed: 0.1,
         width: 74,
@@ -112,8 +106,8 @@ var entities = [
     {
         x: 130,
         y: 230,
-        nextX: 60,
-        nextY: 60,
+        nextX: 130,
+        nextY: 231,
         speed: 0.1,
         width: 74,
         height: 101,
@@ -126,8 +120,8 @@ var entities = [
         playerId: 2,
         originX: 60,
         originY: 60,
-        destX: 65,
-        destY: 65,
+        destX: 130,
+        destY: 130,
         victim: null,
         distanceTravelled: 0,
         destCooldown: 0,
@@ -141,8 +135,8 @@ var entities = [
     {
         x: 500,
         y: 500,
-        nextX: 700,
-        nextY: 500,
+        nextX: 500,
+        nextY: 501,
         speed: 0.1,
         width: 74,
         height: 101,
@@ -156,7 +150,7 @@ var entities = [
         originX: 700,
         originY: 500,
         destX: 705,
-        destY: 505,
+        destY: 501,
         victim: null,
         distanceTravelled: 0,
         destCooldown: 0,
@@ -170,7 +164,7 @@ var entities = [
     {
         x: 60,
         y: 500,
-        nextX: 60,
+        nextX: 61,
         nextY: 500,
         speed: 0.1,
         width: 74,
@@ -182,7 +176,7 @@ var entities = [
         actualJunk: 10,
         throwableJunk: 10,
         playerId: 4,
-        originX: 60,
+        originX: 61,
         originY: 500,
         destX: 65,
         destY: 505,
@@ -239,7 +233,7 @@ var drawObstacle = drawThing;
 var drawBullet = drawThing;
 
 function updateSpriteState(sprite) {
-    sprite.lastSpriteTime += dt();
+    sprite.lastSpriteTime += dt;
     if (sprite.lastSpriteTime === 0 || sprite.lastSpriteTime >= 100) {
         sprite.lastSpriteTime = 0;
         sprite.spriteState++;
@@ -248,7 +242,9 @@ function updateSpriteState(sprite) {
 }
 
 function updateMain( ) {
-    now(Date.now());
+    now = Date.now();
+    dt = now - then;
+
     clearCanvas();
     for (var e in entities) {
         entities[e].nextX = entities[e].x;
@@ -257,19 +253,19 @@ function updateMain( ) {
 
     // movement (updates player)
     if (keysDown[37] || keysDown[65]) {
-        player.nextX = Math.floor(player.x - player.speed * dt());
+        player.nextX = Math.floor(player.x - player.speed * dt);
         //move left
     }
     if (keysDown[39] || keysDown[68]) {
-        player.nextX = Math.floor(player.x + player.speed * dt());
+        player.nextX = Math.floor(player.x + player.speed * dt);
         // move right
     }
     if (keysDown[38] || keysDown[87]) {
-        player.nextY = Math.floor(player.y - player.speed * dt());
+        player.nextY = Math.floor(player.y - player.speed * dt);
         // move up
     }
     if (keysDown[40] || keysDown[83]) {
-        player.nextY = Math.floor(player.y + player.speed * dt());
+        player.nextY = Math.floor(player.y + player.speed * dt);
         // move down
     }
     if ( keysDown[32]) {
@@ -406,9 +402,9 @@ function updateMain( ) {
 		newEntity.distanceTravelled = 0; // need to reset for getNextThing
             }
         }
-	newEntity.destCooldown-=dt();
-	newEntity.huntCooldown-=dt();
-	newEntity.shootCooldown-=dt();
+	newEntity.destCooldown-=dt;
+	newEntity.huntCooldown-=dt;
+	newEntity.shootCooldown-=dt;
         entities[i] = newEntity;
     }
 
@@ -506,7 +502,7 @@ function updateMain( ) {
 	ctx.fillRect(742,452 + i * 11,25,4);
     }
 
-    then(Date.now()); // then is now now
+    then = Date.now(); // then is now now
 
     stateChangeTimer--; // for the next possible AI statechange
 
@@ -589,7 +585,7 @@ function nextThingAlongLine(thing) {
     var nX3 = x3 / d3;
     var nY3 = y3 / d3;
 
-    thing.distanceTravelled = thing.distanceTravelled + (dt() * thing.speed);
+    thing.distanceTravelled = thing.distanceTravelled + (dt * thing.speed);
     thing.nextX = Math.round(thing.originX + nX3 * thing.distanceTravelled);
     thing.nextY = Math.round(thing.originY + nY3 * thing.distanceTravelled);
 
@@ -636,13 +632,11 @@ function canSee( entity1, entity2 ) {
     var destY = entity2.y + entity2.height/2;
     var sight = { x: originX , y: originY, nextX: originX, nextY: originY, width: 20, height: 20, originX: originX, originY: originY, destX: destX, destY: destY, distanceTravelled: 0, speed: 1, shooter: entity1 };
 
-    ctx.fillStyle="#ff0000";
-    ctx.fillRect(sight.x,sight.y,sight.width,sight.height);
-
     while ( !checkCollision(sight, obstacles) && /* not hitting obstacles */
 	    !outsideBoundary(sight, ctx) /* not offscreen */) {
 	sight = nextThingAlongLine(sight); // get next glance
-	ctx.fillRect(sight.x,sight.y,sight.width,sight.height);
+	sight.x = sight.nextX;
+	sight.y = sight.nextY;
     }
 
     if ( checkCollision(sight, obstacles) ) ret = false;
@@ -657,7 +651,7 @@ function updateSplashScreen ( splashSize ) {
         clearCanvas();
 
         var speed = 0.5;
-        var ds = speed + dt() / 1000;
+        var ds = speed + dt / 1000;
         var size = splashSize + ds;
         ctx.font = size + "px Verdana";
         ctx.fillStyle = "#777777";
@@ -697,7 +691,39 @@ function playAgainMaybe(e) {
 	for (e in entities) {
 	    entities[e].actualJunk = 10;
 	    entities[e].throwableJunk = 10;
+
+	    switch ( e.playerId ) {
+		case 1: {
+		    entities[e].x = 600;
+		    entities[e].y = 60;
+		    entities[e].nextX = 601;
+		    entities[e].nextY = 60;
+		    break;
+		}
+		case 2: {
+		    entities[e].x = 130;
+		    entities[e].y = 230;
+		    entities[e].nextX = 130;
+		    entities[e].nextY = 231;
+		    break;
+		}
+		case 3: {
+		    entities[e].x = 500;
+		    entities[e].y = 500;
+		    entities[e].nextX = 500;
+		    entities[e].nextY = 501;
+		    break;
+		}
+		case 4: {
+		    entities[e].x = 60;
+		    entities[e].y = 500;
+		    entities[e].nextX = 61;
+		    entities[e].nextY = 500;
+		    break;
+		}
+	    }
 	}
+
 	updateMain();
     }
 }
@@ -705,18 +731,9 @@ function playAgainMaybe(e) {
 
 // kinda dumb, but some of this can't be run before DOM is complete
 function init() {
-    targetX = 0;
-    targetY = 0;
-
-    mouseX = $R.state(0);
-    mouseY = $R.state(0);
-    mouseCoords = $R(function (mouseX, mouseY) { return 'X=' + mouseX + ' Y=' + mouseY; });
-    mouseCoords.bindTo(mouseX, mouseY);
-
-    then = $R.state(Date.now());
-    now = $R.state(Date.now());
-    dt = $R(function (now, then) { return now - then; });
-    dt.bindTo(now, then);
+    then = Date.now();
+    now = Date.now();
+    dt = now - then;
 
     stateChangeTimer = 100;
 
@@ -770,17 +787,11 @@ function init() {
     }
 
     function skipSplash(e) {
-	then(Date.now());
+	then = Date.now();
 	updateMain();
 	removeEventListener("mousedown", skipSplash, false);
 	addEventListener("mousedown", mouseClick, false);
     }
-
-    addEventListener("mousemove", function (e) {
-	mouseX(e.offsetX);
-	mouseY(e.offsetY);
-    }, false);
-
 }
 
 // Event handled for Mute / Unmute button.  Toggle between playing and pausing the audio
